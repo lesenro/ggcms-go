@@ -1,0 +1,81 @@
+* {
+    font: 12px/1.5 Tahoma, Helvetica, Arial, 'Microsoft YaHei', sans-serif;
+}
+
+
+/*通用消息框*/
+
+.messageBox .modal-caption .fa {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.messageBox .modal-caption .modal-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.messageBox .modal-body .msg {
+    font-size: 14px;
+}
+
+.messageBox.modal .modal-header {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.messageBox .modal-footer {
+    padding: 10px;
+}
+
+.messageBox .modal-caption {
+    text-align: left;
+}
+
+.messageBox.modal .modal-content {
+    border-radius: 10px;
+}
+
+.messageBox.modal .modal-body {
+    text-align: left;
+}
+
+.messageBox.modal .modal-footer .btn {
+    font-size: 14px;
+    color: #fff;
+    font-weight: 300;
+    margin: 10px;
+}
+
+.messageBox.modal .modal-footer {
+    margin-top: 5px;
+}
+
+.form-group .control-label {
+    font-size: 14px;
+}
+
+.mainTable .col-check {
+    width: 75px;
+}
+
+.mainTable .col-btn-1 {
+    width: 100px;
+}
+
+.datePadding {
+    padding-top: 34px;
+}
+
+.page-header.navbar .top-menu .navbar-nav > li.dropdown-notification.dropdown-dark .dropdown-menu .dropdown-menu-list > li > a .time {
+    max-width: none;
+}
+
+.table .btn-group .btn {
+    margin-right: 0;
+}
+
+.form-horizontal .note-editor .modal-body .form-group {
+    margin-left: 0;
+    margin-right: 0;
+}

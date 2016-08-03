@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+
+<head>
+
+</head>
+<!-- END HEAD -->
+
+<body class="">
+    <p>
+        [# .stylepath]
+    </p>
+    <p>
+        [# .configs.cfg_webname]
+    </p>
+    <p> [# with $ainfo:= ArticleInfo 48]
+        <div>
+            <h2>文章</h2> [# $ainfo]
+            <div>
+                <h2>附件</h2> [# with $attas:= ArticleAttachs 48] [#range $index, $elem := $attas]
+                <p>
+                    <span>[# $elem.Id]</span>
+                    <span>[# $elem.AttrUrl]</span>
+                    <span>[# $elem.Info]</span>
+                    <span>[# $elem.Originalname]</span>
+                    <span>[# $elem.Size]</span>
+                    <span>[# $elem.Addtime]</span>
+                </p>
+                [# end] [# end]
+            </div>
+        </div>
+        <div>
+            <div>
+                <h2>分页</h2> [# with $pages:= ArticlePageList 48] [#range $index, $elem := $pages]
+                <p>
+                    <span>[# $elem.Id]</span>
+                    <span>[# $elem.Content]</span>
+                    <span>[# $elem.Sortid]</span>
+                    <span>[# $elem.Title]</span>
+                </p>
+                [# end] [# end]
+                <h3>第3页</h3>
+                <p>
+                    [# with $elem:= ArticlePageInfo 48 3]
+                    <span>[# $elem.Id]</span>
+                    <span>[# $elem.Content]</span>
+                    <span>[# $elem.Sortid]</span>
+                    <span>[# $elem.Title]</span> [# end]
+                </p>
+                <p>共[# ArticlePageCount 48] 页</p>
+            </div>
+        </div>
+        <div>
+            <h2>模型信息</h2> [# with $models:= ArticleModules $ainfo.Mid $ainfo.Id] [#range $key, $elem := $models]
+            <p>
+                <span>[# $elem.CName]</span>
+                <span>[# $elem.CTitle]</span>
+                <span>[# $elem.Value]</span>
+            </p>
+            [# end] [# end]
+        </div>
+        [# end]
+    </p>
+    <p>
+        <h2>系统字典</h2>
+        <p>
+            [# with $dicts:= SystemDict "nativeplacebak" "16015"] [#range $index, $elem := $dicts]
+            <p>
+                <span>[# $elem.Id]</span>
+                <span>[# $elem.Ename]</span>
+                <span>[# $elem.Evalue]</span>
+                <span>[# $elem.Orderid]</span>
+            </p>
+            [# end] [# end]
+        </p>
+    </p>
+    <p>
+        <h2>栏目</h2> [#range $index, $elem := .categorys]
+        <p>
+            <span>[# $elem.Id]</span>
+            <span> <a href="/category/[# $elem.Id]/">[# $elem.Categoryname]</a></span>
+            <span>[# $elem.Styledir]</span>
+            <span>[# $elem.Pid]</span>
+        </p>
+        [# end]
+    </p>
+</body>
+
+</html>

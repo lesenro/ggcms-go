@@ -1,0 +1,82 @@
+<!-- BEGIN Form Template -->
+<input vali-data="" type="{{item.opts.type}}" id="{{item.Varname}}" name="{{item.Varname}}" class="form-control" placeholder="{{item.Info}}" ng-model="item.Value" ng-if="',text,url,number,email,password,'.indexOf(','+item.opts.type+',')!=-1">
+<input type="checkbox" ng-checked="item.Value=='on'" class="make-switch" id="{{item.Varname}}" name="{{item.Varname}}" data-size="small" data-on-color="{{item.opts.onColor}}" data-on-text="{{item.opts.onText}}" data-off-color="{{item.opts.offColor}}"
+    data-off-text="{{item.opts.offText}}" ng-model="item.Value" ng-if="',switch,'.indexOf(','+item.opts.type+',')!=-1" />
+<div class="input-inline input-large" ng-if="',file,'.indexOf(','+item.opts.type+',')!=-1">
+    <div class="input-group" ng-class="{'input-icon': item.opts.preview}">
+        <i class="icon-picture" ng-if="item.opts.preview" ng-click="preview(item.Varname)"></i>
+        <div type="text" class="form-control"> {{item.FileValue}} </div>
+        <span class="input-group-btn">
+          <button vali-data="" class="btn blue" type="button" id="{{item.Varname}}" forid="{{item.Varname}}" name="{{item.Varname}}">选择文件</button>
+          <button class="btn red" id="{{item.Varname}}_Clear" name="{{item.Varname}}_Clear" ng-if="item.FileValue!=''" ng-click="fileclear(item.Varname)">清除</button>
+        </span>
+    </div>
+</div>
+<div class="input-group input-medium" ng-if="',date,'.indexOf(','+item.opts.type+',')!=-1">
+    <input type="text" vali-data="" id="{{item.Varname}}" name="{{item.Varname}}" class="form-control" datepicker-popup="{{datePicker.format}}" current-text="{{datePicker.currentText}}" is-open="item.opts.opened" clear-text="{{datePicker.clearText}}" close-text="{{datePicker.closeText}}"
+        ng-model="item.Value" datepicker-options="datePicker.options" />
+    <span class="input-group-btn">
+        <button type="button" class="btn btn-default" ng-click="datePicker.open($event,item.opts)">
+            <i class="glyphicon glyphicon-calendar"></i>
+        </button>
+    </span>
+</div>
+<timepicker ng-model="item.Value" hour-step="timePicker.hourStep" minute-step="timePicker.minuteStep" show-meridian="ismeridian" ng-if="',time,'.indexOf(','+item.opts.type+',')!=-1"></timepicker>
+<div class="row" ng-if="',datetime,'.indexOf(','+item.opts.type+',')!=-1">
+    <div class="col-sm-6">
+        <div class="input-group datePadding">
+            <input type="text" id="{{item.Varname}}" name="{{item.Varname}}" vali-data="" class="form-control" datepicker-popup="{{datePicker.format}}" current-text="{{datePicker.currentText}}" is-open="item.opts.opened" clear-text="{{datePicker.clearText}}" close-text="{{datePicker.closeText}}"
+                ng-model="item.Value" datepicker-options="datePicker.options" />
+            <span class="input-group-btn">
+        <button type="button" class="btn btn-default" ng-click="datePicker.open($event,item.opts)">
+            <i class="glyphicon glyphicon-calendar"></i>
+        </button>
+        </span>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <timepicker ng-model="item.Value" hour-step="timePicker.hourStep" minute-step="timePicker.minuteStep" show-meridian="ismeridian"></timepicker>
+    </div>
+</div>
+<textarea vali-data="" id="{{item.Varname}}" name="{{item.Varname}}" class="form-control" placeholder="{{item.Info}}" ng-model="item.Value" ng-if="',textarea,'.indexOf(','+item.opts.type+',')!=-1"></textarea>
+<summernote config="richeditor" id="{{item.Varname}}" name="{{item.Varname}}" class="form-control" ng-model="item.Value" on-image-upload="imageUpload(files,item.Varname)" ng-if="',richeditor,'.indexOf(','+item.opts.type+',')!=-1"></summernote>
+<summernote config="simpleditor" id="{{item.Varname}}" name="{{item.Varname}}" class="form-control" ng-model="item.Value" on-image-upload="imageUpload(files,item.Varname)" ng-if="',simpleditor,'.indexOf(','+item.opts.type+',')!=-1"></summernote>
+<select class="form-control input-inline" name="{{item.Varname}}" id="{{item.Varname}}" ng-model="item.Value" ng-if="',select,'.indexOf(','+item.opts.type+',')!=-1&&!item.opts.multiple&&item.opts.datasource=='sysenum'" ng-options="kv.Evalue as kv.Ename for kv in dict[item.opts.egroup]">
+    <option value="" selected>---请选择---</option> 
+</select>
+<select class="form-control input-inline" name="{{item.Varname}}" id="{{item.Varname}}" ng-change="styleChange(item.Value)" ng-model="item.Value" ng-if="',select,'.indexOf(','+item.opts.type+',')!=-1&&!item.opts.multiple&&item.opts.datasource=='style'"
+    ng-options="kv.Style_folder as kv.Style_name for kv in style.style">
+    <option value="" selected>---请选择---</option> 
+</select>
+<select class="form-control input-inline" name="{{item.Varname}}" id="{{item.Varname}}" ng-model="item.Value" ng-if="',select,'.indexOf(','+item.opts.type+',')!=-1&&!item.opts.multiple&&item.opts.datasource=='template'" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:item.opts.egroup}:templateFilter">
+    <option value="" selected>---请选择---</option> 
+</select>
+
+<select multiple class="form-control input-inline" name="{{item.Varname}}" id="{{item.Varname}}" ng-model="item.Value" ng-if="',select,'.indexOf(','+item.opts.type+',')!=-1&&item.opts.multiple">
+    <option value="{{kv.Evalue}}"  ng-repeat="kv in dict[item.opts.egroup]">{{kv.Ename}}</option> 
+</select>
+<span ng-if="',select,'.indexOf(','+item.opts.type+',')!=-1&&item.opts.multiple" class="font-red font-lg">按ctrl点击多选</span>
+<div class="checkbox-list" ng-if="',checkbox,'.indexOf(','+item.opts.type+',')!=-1">
+    <label class="checkbox-inline" ng-repeat="kv in dict[item.opts.egroup] | orderBy:'Orderid'"> 
+        <input type="checkbox" ng-click="cbxchange(item.Varname,kv.Evalue,$event)"  name="{{item.Varname}}" value="{{kv.Evalue}}" ng-checked="cbxselect(item.Value,kv.Evalue)"> {{kv.Ename}}
+    </label>
+</div>
+<div class="radio-list" ng-if="',radio,'.indexOf(','+item.opts.type+',')!=-1">
+    <label class="radio-inline" ng-repeat="kv in dict[item.opts.egroup]"> 
+        <input type="radio" ng-click="App.updateUniform()" ng-model="item.Value" name="{{item.Varname}}" value="{{kv.Evalue}}" ng-checked="item.Value==kv.Evalue"> {{kv.Ename}}
+    </label>
+</div>
+
+<span class="help-block" ng-if="item.opts.helpMessage!=''"> {{item.opts.helpMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$invalid&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.message!=''"> {{item.opts.message}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.required&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.required && item.opts.requiredMessage!=''"> {{item.opts.requiredMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.minlength&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.minLength>0 && item.opts.minLengthMessage!=''"> {{item.opts.minLengthMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.maxlength&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.maxLength>0 && item.opts.maxLengthMessage!=''"> {{item.opts.maxLengthMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.min&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.min>0 && item.opts.minMessage!=''"> {{item.opts.minMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.max&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.max>0 && item.opts.maxMessage!=''"> {{item.opts.maxMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.pattern&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.pattern!='' && item.opts.patternMessage!=''"> {{item.opts.patternMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.minDate&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.minDate!='' && item.opts.minDateMessage!=''"> {{item.opts.minDateMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.maxDate&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.maxDate!='' && item.opts.maxDateMessage!=''"> {{item.opts.maxDateMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.maxSize&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.fileSize!='' && item.opts.fileSizenMessage!=''"> {{item.opts.fileSizenMessage}} </span>
+<span class="help-block" ng-show="ggcmsForm.{{item.Varname}}.$error.pattern&&!ggcmsForm.{{item.Varname}}.$pristine" ng-if="item.opts.extension!='' && item.opts.extensionMessage!=''"> {{item.opts.extensionMessage}} </span>
+<!-- End Form Template -->

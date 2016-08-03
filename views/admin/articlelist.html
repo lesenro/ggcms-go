@@ -1,0 +1,186 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="DataListCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper">系统设置</span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">Home</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row clearfix" ng-controller="SearchCtrl">
+                    <div class="col-sm-4">
+                        <a href="#/articleadd.html?type={{atype}}" class="btn green-haze btn-outline sbold uppercase"> <i class="fa fa-plus"></i> 添加</a>
+                        <button href="#/home.html" class="btn red-haze btn-outline sbold uppercase" ng-click="delete(delData,$event)"> <i class="glyphicon glyphicon-remove"></i> 删除</button>
+                    </div>
+                    <div class="col-sm-2 col-sm-offset-2">
+                        <div class="input-group pull-right">
+                            <select class="form-control" ng-model="stype">
+                                <option selected value="title">标题</option>
+                                <option value="categoryid">栏目</option>
+                                <option value="egroup">专题</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <!-- BEGIN HEADER SEARCH BOX -->
+                        <!-- DOC: Apply "search-form-expanded" right after the "search-form" class to have half expanded search box -->
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="搜索..." name="query" ng-model="query" ng-show="stype=='title'" />
+                            <input type="text" class="form-control" typeahead="state as state.Categoryname for state in clist | filter:{Categoryname:$viewValue} | limitTo:8" placeholder="搜索..." name="cquery" ng-model="cquery" ng-show="stype=='categoryid'" />
+                            <span class="input-group-btn">
+                                <a class="btn btn-default"  ng-href="{{gosearch()}}">
+                                    <i class="icon-magnifier"></i>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- END HEADER SEARCH BOX -->
+                </div>
+                <div class="row margin-top-10">
+                    <div class="col-xs-12">
+
+                        [#with .list]
+                        <table class="table table-bordered table-striped mainTable">
+                            <thead>
+                                <tr>
+                                    <th class="col-check"> <input type="checkbox" ng-model="all" ng-click="checkAll($event)">全选 </th>
+                                    <th> 标题 </th>
+                                    <th> 栏目 </th>
+                                    <th> 日期 </th>
+                                    <th class="col-btn-1"> 修改 </th>
+                                </tr>
+                            </thead>
+                            <tbody class="data-list" ng-controller="ArticleListCtrl">
+                                [#range $index,$item:=.]
+                                <tr>
+                                    <td class="text-center">
+                                        <input type="checkbox" class="item-check" ng-click="check([#$item.Id],$event)" ng-checked="all" value="[#$item.Id]">
+                                    </td>
+                                    <td>
+                                        [#$item.Title]
+                                    </td>
+                                    <td>
+                                        {{categoryName([#$item.Categoryid])}}
+                                    </td>
+                                    <td>
+                                        {{dateFmt("[#$item.Dateandtime]")}}
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="#/articleadd.html?type={{atype}}&id=[#$item.Id]" class="btn btn-xs blue sbold"> <i class="fa fa-edit"></i> 修改 </a>
+                                    </td>
+                                </tr>
+                                [#end]
+                            </tbody>
+                        </table>
+                        [#else]
+                        <div class="alert alert-info">
+                            <strong>提示：</strong> 没有{{$state.current.data.pageTitle}}数据
+                        </div>
+                        [#end] [#template "admin/tpl/pagination.html" .]
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<script>
+    var deleteUrl = "/api/ggcms_sys_enum/delete";
+    var clist = [#.clist];
+
+    function SearchCtrl($scope, $stateParams, $location) {
+        $scope.clist = clist;
+        $scope.query = "";
+        $scope.cquery = "";
+        $scope.stype = "title"
+        $scope.atype = [#.atype];
+        $scope.categoryName = function(cid) {
+            for (i in $scope.clist) {
+                var item = $scope.clist[i];
+                if (item.Id == Math.abs(cid)) {
+                    return item.Categoryname;
+                }
+            }
+            return "单页文章";
+        }
+        if ($stateParams.qs) {
+            var qs = JSON.parse($stateParams.qs);
+            var t = qs.QueryString.split(/[.|:]/);
+            if (t.length == 3) {
+                $scope.stype = t[0];
+                if ("title" === $scope.stype) {
+                    $scope.query = t[2];
+                }
+                if ("categoryid" === $scope.stype) {
+                    $scope.cquery = $scope.categoryName(t[2]);
+                }
+            }
+        }
+
+        $scope.gosearch = function() {
+            if ("title" === $scope.stype && "" === $scope.query) {
+                return;
+            }
+            if ("categoryid" === $scope.stype && "" === $scope.cquery) {
+                return;
+            }
+            var qs = {};
+            if ("title" === $scope.stype) {
+                qs.QueryString = "title.icontains:" + $scope.query;
+            }
+            if ("categoryid" === $scope.stype) {
+                var cid = 0;
+                for (i in $scope.clist) {
+                    var item = $scope.clist[i];
+                    var reg = eval("/^" + $scope.cquery + "/");
+                    if (reg.test(item.Categoryname)) {
+                        cid = item.Id;
+                        break;
+                    }
+                }
+                if (cid == 0) {
+                    return;
+                }
+                qs.QueryString = "categoryid.exact:" + cid;
+            }
+            qs.SortBy = "";
+            qs.Order = "";
+            qsStr = JSON.stringify(qs);
+            url = "#" + $location.$$path + "?qs=" + qsStr;
+            return url;
+        };
+    }
+
+    function ArticleListCtrl($scope) {
+        $scope.atype = [#.atype];
+        $scope.clist = clist;
+        $scope.dateFmt = function(val) {
+            var date = new Date(Date.parse(val));
+            return App.dateFormat(date, "yyyy-MM-dd");
+        }
+        $scope.categoryName = function(cid) {
+            for (i in $scope.clist) {
+                var item = $scope.clist[i];
+                if (item.Id == Math.abs(cid)) {
+                    return item.Categoryname;
+                }
+            }
+            return "单页文章";
+        }
+    }
+</script>

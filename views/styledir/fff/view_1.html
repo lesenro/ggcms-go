@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+<head>
+
+</head>
+<!-- END HEAD -->
+
+<body class="">
+    <p>
+        [# .stylepath]
+    </p>
+    <p>
+        [# .configs.cfg_webname]
+    </p>
+    <p>
+        <h2>[# .articleinfo.Title]</h2>
+        <h3>[# .pageinfo.Title]</h3>
+    </p>
+    <p>
+        [# str2html .pageinfo.Content]
+    </p>
+    <p>
+        [#template "admin/tpl/pagination.html" .]
+    </p>
+    <p>
+        <h2>附件</h2> [#range $index, $elem := .attachs]
+        <p>
+            <span class="fa fa-cloud"></span>
+            <span>[# $elem.Id]</span>
+            <span>[# $elem.AttrUrl]</span>
+            <span>[# $elem.Info]</span>
+            <span>[# $elem.Originalname]</span>
+            <span>[# $elem.Size]</span>
+            <span>[# $elem.Addtime]</span>
+        </p>
+        [# end]
+    </p>
+    <p>
+        <h2>模型信息</h2> [#range $key, $elem := .moduleinfo]
+        <p>
+            <span>[# $elem.CName]</span>
+            <span>[# $elem.CTitle]</span>
+            <span>[# $elem.Value]</span>
+        </p>
+        [# end]
+    </p>
+</body>
+
+</html>

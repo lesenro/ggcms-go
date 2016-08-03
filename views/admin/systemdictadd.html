@@ -1,0 +1,91 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="DataEditCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper">系统设置</span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">Home</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" name="ggcmsForm" role="form" novalidate>
+                            <input type="hidden" value="[#.info.Id]" ng-model="data.Id">
+                            <div class="form-body">
+                                <div class="form-group" ng-class="{'has-error' : ggcmsForm.Ename.$invalid&&!ggcmsForm.Ename.$pristine}">
+                                    <label class="col-md-3 control-label">键名</label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="Ename" minlength="2" maxlength="30" class="form-control" placeholder="键名" ng-model="data.Ename" required>
+                                        <span class="help-block" ng-show="ggcmsForm.Ename.$invalid&&!ggcmsForm.Ename.$pristine"> 键名请输入2到30个的字符 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">键值</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Evalue.$invalid&&!ggcmsForm.Evalue.$pristine}">
+                                        <input type="text" name="Evalue" maxlength="255" class="form-control" placeholder="键值" ng-model="data.Evalue" required>
+                                        <span class="help-block" ng-show="ggcmsForm.Evalue.$invalid&&!ggcmsForm.Evalue.$pristine"> 必须输入键值,且不得超出255个字符 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">分组</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Egroup.$invalid&&!ggcmsForm.Egroup.$pristine}">
+                                        <input type="text" typeahead="state for state in data.groups | filter:$viewValue | limitTo:8" id="Egroup" name="Egroup" minlength="2" maxlength="20" class="form-control" placeholder="分组名称" ng-model="data.Egroup">
+                                        <span class="help-block" ng-show="ggcmsForm.Egroup.$invalid&&!ggcmsForm.Egroup.$pristine"> 必须输入2到20个字符分组名称 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">所属键值</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Pvalue.$invalid&&!ggcmsForm.Pvalue.$pristine}">
+                                        <input type="text" name="Pvalue" maxlength="255" class="form-control" placeholder="所属键值" ng-model="data.Pvalue">
+                                        <span class="help-block" ng-show="ggcmsForm.Pvalue.$invalid&&!ggcmsForm.Pvalue.$pristine"> 所属键值不得超出255个字符 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">排序</label>
+                                    <div class="col-md-9">
+                                        <input type="number" name="Orderid" class="form-control" placeholder="排序:从小到大" ng-model="data.Orderid">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button class="btn green" ng-click="update(data)" ng-disabled="ggcmsForm.$invalid"> <span class="fa fa-save"></span> 保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS -->
+<script>
+    var infoData = {
+        data: [#.info],
+        postUrl: '/api/ggcms_sys_enum/',
+        msgTitle: "系统字典",
+        msgShowInput: "Ename"
+    };
+    infoData.data.groups = [#.groups];
+</script>
+<!-- END MAIN JS -->

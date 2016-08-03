@@ -1,0 +1,94 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="DataListCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper">系统设置</span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">Home</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="clearfix">
+                    <a href="#/sitesettingadd.html" class="btn green-haze btn-outline sbold uppercase"> <i class="fa fa-plus"></i> 添加</a>
+                    <button href="#" class="btn red-haze btn-outline sbold uppercase" ng-click="delete(delData,$event)"> <i class="glyphicon glyphicon-remove"></i> 删除</button>
+                </div>
+                <div class="row margin-top-10">
+                    <div class="col-xs-12" ng-controller="OtherCtrl">
+
+                        [#with .list]
+                        <table class="table table-bordered table-striped mainTable">
+                            <thead>
+                                <tr>
+                                    <th class="col-check"> <input type="checkbox" ng-model="all" ng-click="checkAll($event)">全选 </th>
+                                    <th> 站点名称 </th>
+                                    <th> 域名 </th>
+                                    <th> 描述 </th>
+                                    <th class="col-btn-2"> 修改 </th>
+                                </tr>
+                            </thead>
+                            <tbody class="data-list">
+                                [#range $index,$item:=.]
+                                <tr>
+                                    <td class="text-center">[#if ne $item.Site_main 1]
+                                        <input type="checkbox" class="item-check" ng-click="check([#$item.Id],$event)" ng-checked="all" value="[#$item.Id]"> [#end]
+                                    </td>
+                                    <td>
+                                        [#$item.Site_name]
+                                    </td>
+                                    <td>
+                                        [#$item.Site_domain]
+                                    </td>
+                                    <td>
+                                        [#$item.Site_descrip]
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="#/sitesettingadd.html?id=[#$item.Id]" class="btn btn-xs blue sbold"> <i class="fa fa-edit"></i> 修改 </a>
+                                        <button href="#" class="btn btn-xs green sbold" ng-click="updateConfig([#$item.Id],$event) "> <i class="fa fa-refresh "></i> 更新配置</button>
+                                    </td>
+                                </tr>
+                                [#end]
+                            </tbody>
+                        </table>
+                        [#else]
+                        <div class="alert alert-info">
+                            <strong>提示：</strong> 没有站点数据
+                        </div>
+                        [#end] [#template "admin/tpl/pagination.html" .]
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<script>
+    var deleteUrl = "/api/ggcms_sites/delete";
+
+    function OtherCtrl($scope, AJAX) {
+        $scope.updateConfig = function(id, $event) {
+            AJAX.load({
+                url: "/api/ggcms_sites/updateconfig/" + id,
+                method: 'GET',
+                func: function(retData) {
+                    App.messageBox({
+                        msg: "网站配置更新成功。",
+                    });
+                }
+            });
+        };
+    }
+</script>

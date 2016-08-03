@@ -1,0 +1,77 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="DataEditCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper">系统设置</span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">Home</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" name="ggcmsForm" role="form" novalidate>
+                            <input type="hidden" value="[#.info.Id]" ng-model="data.Id">
+                            <div class="form-body">
+                                <div class="form-group" ng-class="{'has-error' : ggcmsForm.Site_name.$invalid&&!ggcmsForm.Site_name.$pristine}">
+                                    <label class="col-md-3 control-label">站点名称</label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="Site_name" minlength="2" maxlength="30" class="form-control" placeholder="站点名称" required ng-model="data.Site_name">
+                                        <span class="help-block" ng-show="ggcmsForm.Site_name.$invalid&&!ggcmsForm.Site_name.$pristine"> 站点名称请输入2到30个的字符 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">域名</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Site_domain.$invalid&&!ggcmsForm.Site_domain.$pristine}">
+                                        <input type="text" name="Site_domain" maxlength="255" class="form-control" placeholder="域名" required ng-model="data.Site_domain" ng-pattern="/^[0-9a-zA-Z]+[0-9a-zA-Z\.-]*\.[a-zA-Z]{2,4}$/">
+                                        <span class="help-block" ng-show="ggcmsForm.Site_domain.$invalid&&!ggcmsForm.Site_domain.$pristine"> 请输入正确的域名，如:www.ggcms.com </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">站点描述</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Site_descrip.$invalid&&!ggcmsForm.Site_descrip.$pristine}">
+                                        <input type="text" name="Site_descrip" maxlength="255" class="form-control" placeholder="站点描述" ng-model="data.Site_descrip">
+                                        <span class="help-block" ng-show="ggcmsForm.Site_descrip.$invalid&&!ggcmsForm.Site_descrip.$pristine"> 描述不能超过255个字 </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button class="btn green" ng-click="update(data)" ng-disabled="ggcmsForm.$invalid"> <span class="fa fa-save"></span> 保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS -->
+<script>
+    var infoData = {
+        data: [#.info],
+        postUrl: '/api/ggcms_sites/',
+        msgTitle: "站点",
+        msgShowInput: "Site_name"
+    };
+</script>
+<!-- END MAIN JS -->

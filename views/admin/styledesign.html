@@ -1,0 +1,144 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="DataListCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper">系统设置</span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">管理首页</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="clearfix">
+                    <span ng-controller="ImportCtrl">
+                        <a href="javascript:;" ngf-validate-fn="validate($file)" ngf-select="upload($file)" class="btn green-haze btn-outline sbold uppercase"> <i class="fa fa-download"></i> 导入</a>
+                    </span>
+                    <button href="#" class="btn red-haze btn-outline sbold uppercase" ng-click="delete(delData,$event)"> <i class="glyphicon glyphicon-remove"></i> 删除</button>
+                </div>
+                <div class="row margin-top-10">
+                    <div class="col-xs-12">
+
+                        [#with .list]
+                        <table class="table table-bordered table-striped mainTable">
+                            <thead>
+                                <tr>
+                                    <th class="col-check"> <input type="checkbox" ng-model="all" ng-click="checkAll($event)">全选 </th>
+                                    <th> 风格名称 </th>
+                                    <th> 风格目录名 </th>
+                                    <th> 描述 </th>
+                                    <th class="col-btn-1"> 修改 </th>
+                                </tr>
+                            </thead>
+                            <tbody class="data-list">
+                                [#range $index,$item:=.]
+                                <tr>
+                                    <td class="text-center">
+                                        <input type="checkbox" class="item-check" ng-click="check([#$item.Id],$event)" ng-checked="all" value="[#$item.Id]">
+                                    </td>
+                                    <td>
+                                        [#$item.Style_name]
+                                    </td>
+                                    <td>
+                                        [#$item.Style_folder]
+                                    </td>
+                                    <td>
+                                        [#$item.Style_descrip]
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-xs">
+                                            <a href="#/styledesignadd.html?id=[#$item.Id]" class="btn blue"> <i class="fa fa-edit"></i> 修改 </a>
+                                            <button type="button" class="btn blue dropdown-toggle" data-toggle="dropdown"> <i class="fa fa-angle-down"></i> </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li>
+                                                    <a href="#/styletemplate.html?id=[#$item.Id]"> <i class="fa fa-newspaper-o"></i> 查看模板 </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#/stylestaticfile.html?id=[#$item.Id]"> <i class="fa fa-file-o"></i> 静态文件 </a>
+                                                </li>
+                                                <li class="divider"> </li>
+                                                <li>
+                                                    <a href="javascript:;" ng-href="{{ggcmsCfg.cfg_prefixpath}}/api/ggcms_styles/export/[#$item.Id]"> <i class="fa fa-upload"></i> 导出 </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                [#end]
+                            </tbody>
+                        </table>
+                        [#else]
+                        <div class="alert alert-info">
+                            <strong>提示：</strong> 没有{{$state.current.data.pageTitle}}数据
+                        </div>
+                        [#end] [#template "admin/tpl/pagination.html" .]
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<script>
+    var deleteUrl = "/api/ggcms_styles/delete";
+
+    function ImportCtrl($scope, AJAX, FileUpload) {
+        //文件上传相关
+        $scope.validate = function(file) {
+            //(/(\.zip|\.rar)$/i).test("aaa.aaab")
+            var ok = (/(\.zip)$/i).test(file.name);
+            if (!ok) {
+                App.messageBox({
+                    msg: "请导入正确的zip压缩包.",
+                    icon: "warning",
+                    title: "导入失败",
+                });
+            }
+            return ok
+        }
+
+        // upload on file select or drop
+        $scope.upload = function(file) {
+            if (!file) {
+                return false;
+            }
+            App.blockUI({
+                message: "正在导入风格，请稍候..."
+            });
+            FileUpload.send({
+                file: file,
+                siteid: $scope.settings.currentSite,
+                func: function(resp) {
+                    var fn = resp.data.Data;
+                    AJAX.load({
+                        url: "/api/ggcms_styles/import",
+                        data: {
+                            fn: fn
+                        },
+                        func: function(retData) {
+                            App.messageBox({
+                                msg: "风格导入成功!",
+                                func: function() {
+                                    window.location.reload();
+                                }
+                            });
+                            App.unblockUI();
+                        }
+                    });
+                }
+            });
+        };
+    }
+</script>

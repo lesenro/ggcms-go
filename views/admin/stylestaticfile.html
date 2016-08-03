@@ -1,0 +1,418 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="FileListCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper">系统设置</span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">管理首页</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li>
+                            <a href="#/styledesign.html">风格模板</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="clearfix">
+                    <span>
+                        <a href="javascript:;" ngf-validate-fn="validate($file)" ngf-select="upload($file)" class="btn green-haze btn-outline sbold uppercase"> <i class="fa fa-upload"></i> 上传</a>
+                    </span>
+                    <button href="#" class="btn red-haze btn-outline sbold uppercase" ng-click="delete(delData,$event)"> <i class="glyphicon glyphicon-remove"></i> 删除</button>
+                    <div class="pull-right">
+                        <a href="#/styledesign.html" class="btn btn-outline btn-default"> 返回风格模板 </a>
+                        <a href="#/styletemplate.html?id={{info.Id}}" class="btn btn-outline btn-info"> 浏览模板文件 </a>
+                    </div>
+                </div>
+                <div class="row margin-top-10">
+                    <div class="col-xs-12">
+                        <table class="table table-bordered table-striped mainTable" ng-if="list.length>0">
+                            <thead>
+                                <tr>
+                                    <th class="col-check"> <input type="checkbox" ng-model="all" ng-click="checkAll($event)">全选 </th>
+                                    <th> 文件名称 </th>
+                                    <th> 大小 </th>
+                                    <th> 日期 </th>
+                                    <th> 重命名 </th>
+                                </tr>
+                            </thead>
+                            <tbody class="data-list">
+                                <tr ng-if="path!=''">
+                                    <td></td>
+                                    <td colspan="5">
+                                        <i class="fa fa-level-up"></i> <a href="javascript:;" ng-click="pathChange(null)"> 返回上级</a>
+                                        <span class="label label-primary"> {{path}} </span>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="item in list | orderBy:['-IsDir','-ModTime']">
+                                    <td class="text-center">
+                                        <input type="checkbox" class="item-check" ng-click="check(item.Name,$event)" ng-checked="all" value="{{item.Name}}" ng-if="!item.IsDir">
+                                    </td>
+                                    <td>
+                                        <i class="fa fa-folder-o" ng-if="item.IsDir"></i>
+                                        <i class="fa fa-file-image-o" ng-if='GetType(item)=="img"'></i>
+                                        <i class="fa fa-file-code-o" ng-if='GetType(item)=="js"'></i>
+                                        <i class="fa fa-file-text-o" ng-if='GetType(item)=="css"'></i>
+                                        <i class="fa fa-file-o" ng-if='GetType(item)=="oth"'></i>
+                                        <a href="javascript:;" ng-if="item.IsDir" ng-click="pathChange(item)">{{item.Name}}</a>
+                                        <span ng-if="!item.IsDir">{{item.Name}}</span>
+                                    </td>
+                                    <td>
+                                        <span ng-if="!item.IsDir">{{fSize(item.Size)}}</span>
+                                    </td>
+                                    <td>
+                                        {{dateFmt(item.ModTime,"yyyy-MM-dd")}}
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn blue btn-xs" ng-if="item.IsDir" ng-click="pathChange(item)"> <i class="fa fa-eye"></i> 浏览 </button>
+                                        <button class="btn blue btn-xs" ng-click="editor(item)" ng-if="allowEdit(item)"> <i class="fa fa-edit"></i> 编辑 </button>
+                                        <button class="btn blue btn-xs" ng-click="preview(item.Name)" ng-if="GetType(item)=='img'"> <i class="fa fa-image"></i> 预览 </button>
+                                        <button class="btn blue btn-xs" ng-click="rename(item.Name)"> <i class="fa fa-keyboard-o"></i> 重命名 </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="alert alert-info" ng-if="list.length==0">
+                            <strong>提示：</strong> 没有{{$state.current.data.pageTitle}}数据
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<script type="text/ng-template" id="rename.html">
+    <div class="modal-header">
+        <h3 class="modal-title">请输入新的文件名</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row form-group">
+            <label class="col-md-3 control-label">文件重命名</label>
+            <div class="col-md-9">
+                <input type="text" name="fname" maxlength="255" class="form-control" placeholder="请输入文件名" ng-model="data.name">
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn green" ng-click="ok()">保存</button>
+        <button class="btn red" ng-click="cancel()">取消</button>
+    </div>
+</script>
+<script type="text/ng-template" id="editor.html">
+    <div class="modal-header">
+        <h3 class="modal-title">修改文件:{{data.name}}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <textarea ui-codemirror="{ onLoad : codemirrorLoaded }" ui-codemirror-opts="editorOptions" ui-refresh='true' ng-model="data.tcode"></textarea>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn green" ng-click="ok()">保存</button>
+        <button class="btn red" ng-click="cancel()">取消</button>
+    </div>
+
+</script>
+<script>
+    function ReNameCtrl($scope, $modalInstance, data, AJAX) {
+        $scope.data = data;
+        $scope.ok = function() {
+            AJAX.load({
+                url: "/api/ggcms_styles/renamestatic",
+                data: $scope.data,
+                func: function(retData) {
+                    $modalInstance.close(retData.Data);
+                }
+            });
+        };
+        $scope.cancel = function() {
+            $modalInstance.dismiss('cancel');
+        };
+    }
+    angular.module('GgcmsApp', ['ui.codemirror']);
+
+    function EditorCtrl($scope, $modalInstance, $timeout, data, AJAX) {
+        $scope.data = data;
+        $scope.ok = function() {
+            AJAX.load({
+                url: "/api/ggcms_styles/savestaticfile",
+                data: $scope.data,
+                func: function(retData) {
+                    $modalInstance.close(retData);
+                }
+            });
+        };
+        $scope.cancel = function() {
+            $modalInstance.dismiss('cancel');
+        };
+        $timeout(function() {
+            data.tcode = data.tcode + "\n";
+        });
+        var mode = "text/html";
+        switch (data.ext) {
+            case "js":
+                mode = "text/javascript";
+                break;
+            case "css":
+                mode = "text/css";
+                break;
+            default:
+                mode = "text/html";
+                break;
+        }
+
+        $scope.editorOptions = {
+            lineWrapping: true,
+            lineNumbers: true,
+            autofocus: true,
+            mode: mode,
+        };
+
+    }
+
+    function FileListCtrl($scope, FileUpload, $timeout, $modal, $ocLazyLoad, AJAX) {
+        $ocLazyLoad.load([
+            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/mode/javascript/javascript.js',
+            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/mode/css/css.js',
+            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/mode/xml/xml.js',
+        ]);
+        //回调时更新文件列表
+        var filelist = function(retdata) {
+            $scope.list = retdata.Data;
+        };
+        $scope.path = "";
+        $scope.info = [#.info];
+        $scope.list = [];
+        $scope.delData = [];
+        //日期格式化
+        $scope.dateFmt = function(val) {
+            var date = new Date(Date.parse(val));
+            return App.dateFormat(date, "yyyy-MM-dd");
+        };
+        //获取文件类型
+        $scope.GetType = function(item) {
+            if (item.IsDir) {
+                return "dir";
+            }
+            if ((/(\.png|\.jpg|\.jpeg|\.gif)$/i).test(item.Name)) {
+                return "img";
+            }
+            if ((/(\.js)$/i).test(item.Name)) {
+                return "js";
+            }
+            if ((/(\.css)$/i).test(item.Name)) {
+                return "css";
+            }
+            return "oth";
+        };
+
+        //是否允许编辑
+        $scope.allowEdit = function(item) {
+            if (item.IsDir) {
+                return false;
+            }
+            if ((/(\.css|\.js)$/i).test(item.Name)) {
+                return true;
+            }
+            return false;
+        };
+        //图片预览
+        $scope.preview = function(name) {
+            var path = ($scope.path == "" ? "/" : "/" + $scope.path + "/");
+            var url = ggcmsCfg.cfg_prefixpath + '[#.styledir]/' + $scope.info.Style_folder + path + name;
+            preView.show(url);
+        };
+        //目录改变
+        $scope.pathChange = function(item) {
+            var path = "";
+            if (item) {
+                path = ($scope.path == "" ? item.Name : $scope.path + "/" + item.Name);
+            } else {
+                var index = $scope.path.lastIndexOf("/");
+                path = (index == -1 ? "" : $scope.path.substr(0, index));
+            }
+            AJAX.load({
+                url: "/api/ggcms_styles/staticfile",
+                data: {
+                    id: $scope.info.Id.toString(),
+                    path: path
+                },
+                func: function(retdata) {
+                    $scope.path = path;
+                    $scope.list = retdata.Data;
+                }
+            });
+        };
+        //重命名
+        $scope.rename = function(name) {
+            var modalInstance = $modal.open({
+                templateUrl: 'rename.html',
+                controller: 'ReNameCtrl',
+                resolve: {
+                    data: function() {
+                        return {
+                            name: name,
+                            sname: name,
+                            path: $scope.path,
+                            id: $scope.info.Id.toString(),
+                        };
+                    }
+                }
+            });
+            modalInstance.result.then(function(data) {
+                $scope.list = data;
+                $timeout(function() {
+                    App.initUniform();
+                });
+            }, function() {
+
+            });
+        };
+        //编辑文件
+        $scope.editor = function(item) {
+            var name = item.Name;
+            var t = $scope.GetType(item);
+            var data = {
+                name: name,
+                id: $scope.info.Id.toString(),
+                ext: t,
+                path: $scope.path,
+            };
+            AJAX.load({
+                url: "/api/ggcms_styles/getstaticfile",
+                data: data,
+                func: function(retData) {
+                    data.tcode = retData.Data;
+                    var modalInstance = $modal.open({
+                        templateUrl: 'editor.html',
+                        controller: 'EditorCtrl',
+                        size: "lg",
+                        resolve: {
+                            data: function() {
+                                return data;
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function(retData) {
+                        App.messageBox({
+                            msg: name + " 文件保存成功"
+                        });
+                    }, function() {
+
+                    });
+                }
+            });
+        };
+        $scope.fSize = function(val) {
+            return App.fileSize(val);
+        };
+        $scope.check = function(val, $event) {
+            var chk = $event.currentTarget.checked;
+            if (chk == true) {
+                $scope.delData.push(val);
+            } else {
+                for (i in $scope.delData) {
+                    if ($scope.delData[i] == val) {
+                        $scope.delData.splice(i, 1);
+                    }
+                }
+            }
+        };
+        $scope.delete = function(fs, $e) {
+            if (fs.length == 0) {
+                return false;
+            }
+            App.messageBox({
+                msg: "是否要删除所选中的(" + fs.length + ")个文件?",
+                btn: "yes|no",
+                func: function(e) {
+                    var data = {
+                        id: $scope.info.Id.toString(),
+                        fs: fs,
+                        path: $scope.path,
+                    }
+                    AJAX.load({
+                        url: "/api/ggcms_styles/staticdelete",
+                        data: data,
+                        func: filelist
+                    });
+                    $scope.delData = [];
+                }
+            });
+        };
+        $scope.checkAll = function($event) {
+            var chk = $event.currentTarget.checked;
+            App.updateUniform();
+            $scope.delData = [];
+            if (chk) {
+                $(".data-list .item-check").each(function(e) {
+                    var val = $(this).val();
+                    $scope.delData.push(val);
+                });
+            }
+        };
+        //文件上传相关
+        $scope.validate = function(file) {
+            //(/(\.zip|\.rar)$/i).test("aaa.aaab")
+            var ok = (/(\.js|\.css|\.jpg|\.jpeg|\.png|\.gif)$/i).test(file.name);
+            if (!ok) {
+                App.messageBox({
+                    msg: "请上传图片,js或css文件.",
+                    icon: "warning",
+                    title: "上传失败",
+                });
+            }
+            return ok
+        };
+
+        // upload on file select or drop
+        $scope.upload = function(file) {
+            if (!file) {
+                return false;
+            }
+            App.blockUI({
+                message: "正在导入风格，请稍候..."
+            });
+            FileUpload.send({
+                file: file,
+                siteid: $scope.settings.currentSite,
+                func: function(resp) {
+                    var fn = resp.data.Data;
+                    var data = {
+                        id: $scope.info.Id.toString(),
+                        fn: fn,
+                        path: $scope.path,
+                        name: file.name,
+                    };
+                    AJAX.load({
+                        url: "/api/ggcms_styles/uploadstatic",
+                        data: data,
+                        func: filelist
+                    });
+                }
+            });
+
+        };
+        AJAX.load({
+            url: "/api/ggcms_styles/staticfile",
+            data: {
+                id: $scope.info.Id.toString(),
+                path: $scope.path
+            },
+            func: filelist
+        });
+    }
+</script>

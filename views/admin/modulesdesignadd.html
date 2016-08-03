@@ -1,0 +1,554 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="DataEditCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper">模型编辑</span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">Home</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" name="ggcmsForm" role="form" novalidate>
+                            <input type="hidden" value="[#.info.Id]" ng-model="data.Id">
+                            <div class="form-body">
+                                <tabset>
+                                    <tab heading="基本设置">
+                                        <div class="form-group" ng-class="{'has-error' : ggcmsForm.Module_name.$invalid&&!ggcmsForm.Module_name.$pristine}">
+                                            <label class="col-md-3 control-label">模型名称</label>
+                                            <div class="col-md-9">
+                                                <input type="text" name="Module_name" minlength="2" maxlength="30" class="form-control" placeholder="模型名称" required ng-model="data.Module_name">
+                                                <span class="help-block" ng-show="ggcmsForm.Module_name.$invalid&&!ggcmsForm.Module_name.$pristine"> 模型名称请输入2到30个的字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">模型描述</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Module_descrip.$invalid&&!ggcmsForm.Module_descrip.$pristine}">
+                                                <input type="text" name="Module_descrip" maxlength="255" class="form-control" placeholder="模型描述" ng-model="data.Module_descrip">
+                                                <span class="help-block" ng-show="ggcmsForm.Module_descrip.$invalid&&!ggcmsForm.Module_descrip.$pristine"> 描述不能超过255个字 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">版本信息</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Module_version.$invalid&&!ggcmsForm.Module_version.$pristine}">
+                                                <input type="text" name="Module_version" maxlength="255" class="form-control" placeholder="版本信息" ng-model="data.Module_version">
+                                                <span class="help-block" ng-show="ggcmsForm.Module_version.$invalid&&!ggcmsForm.Module_version.$pristine">  </span>
+                                            </div>
+                                        </div>
+                                    </tab>
+                                    <tab heading="字段扩展">
+                                        <div class="container-fluid" ng-controller="ColumnsEditCtrl">
+                                            <div class="clearfix margin-bottom-10">
+                                                <a href="javascript:;" class="btn green-haze btn-outline sbold uppercase" ng-click="columnAdd()">
+                                                    <i class="fa fa-plus"></i> 添加 </a>
+                                                <a href="javascript:;" class="btn red-haze btn-outline sbold uppercase pull-right" ng-if="showAlertBtn" ng-click="showAlert()">
+                                                    <i class="fa fa-info-circle"></i> 提示 </a>
+                                            </div>
+                                            <alert ng-repeat="alert in alerts | filter:{show: true}" type="{{alert.type}}" close="closeAlert(alert)">
+                                                <span ng-bind-html="alert.msg"></span>
+                                            </alert>
+                                            <div class="table-scrollable">
+                                                <table class="table table-striped table-bordered table-advance table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                字段名 </th>
+                                                            <th>
+                                                                字段类型 </th>
+                                                            <th>
+                                                                小数位 </th>
+                                                            <th> 更多设置 </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="item in data.Columns | orderBy:'Id'">
+                                                            <td class="highlight">
+                                                                <input type="text" name="CTitle" maxlength="255" class="form-control" placeholder="字段名称" required ng-model="item.CTitle">
+                                                            </td>
+                                                            <td>
+                                                                <select class="form-control input-inline" name="CType" ng-model="item.CType" required ng-options="kv.key as kv.val for kv in keyValues | filter:{type:'columntype'}">
+                                                                <option value="" selected>---请选择---</option> 
+                                                            </select>
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" name="cDecimal" min="0" max="5" class="form-control" placeholder="小数位" ng-model="item.CDecimal" ng-if="item.CType=='decimal'">
+                                                            </td>
+                                                            <td>
+                                                                <a href="javascript:;" class="btn btn-sm blue" ng-click="columnMoreSet($index)">
+                                                                    <i class="fa fa-edit"></i> 更多设置 </a>
+                                                                <a href="javascript:;" class="btn btn-sm red" ng-click="columnDel($index)">
+                                                                    <i class="fa fa-times"></i> 删除 </a>
+                                                                <ng-include src="'moresettings.html'"></ng-include>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </tab>
+                                </tabset>
+                            </div>
+                            <div class="form-actions">
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button class="btn green" ng-click="update(data)" ng-disabled="ggcmsForm.$invalid"> <span class="fa fa-save"></span> 保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<script id="moresettings.html" type="text/ng-template">
+    <div class="modal fade messageBox" data-backdrop="static" id="setModal-{{$index}}">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-caption"><span class="fa fa-check-circle font-green"></span><span class="modal-title">更多设置({{item.CTitle}})</span></div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">输入类型</label>
+                            <div class="col-md-9">
+                                <select ng-change="typeChange()" class="form-control input-inline" name="oType" id="oType" ng-model="item.opts.type" ng-options="kv.key as kv.val for kv in keyValues | filter:{type:'inputtype'}"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">帮助说明</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oHelpMessage" maxlength="255" class="form-control" placeholder="帮助说明" ng-model="item.opts.helpMessage">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">通用验证提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oMessage" maxlength="255" class="form-control" placeholder="通用验证提示" ng-model="item.opts.message">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='select'">
+                            <label class="col-md-3 control-label">是否多选</label>
+                            <div class="col-md-9">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" ng-click="cbxchange($event)" ng-checked="item.opts.multiple" id="oMultiple" name="oMultiple" ng-model="item.opts.multiple" />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type!='switch'">
+                            <label class="col-md-3 control-label">是否必填</label>
+                            <div class="col-md-9">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" ng-click="cbxchange($event)" ng-checked="item.opts.required" id="oRequired" name="oRequired" ng-model="item.opts.required" />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type!='switch'&&item.opts.required">
+                            <label class="col-md-3 control-label">必填提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oRequiredMessage" maxlength="255" class="form-control" placeholder="必填提示" ng-model="item.opts.requiredMessage">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='number'">
+                            <label class="col-md-3 control-label">最小值</label>
+                            <div class="col-md-9">
+                                <input type="number" name="oMin" class="form-control input-inline" placeholder="最小值" ng-model="item.opts.min">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="(item.opts.type=='number'&&!ggcmsForm.oMin.$pristine)||item.opts.minMessage!=''">
+                            <label class="col-md-3 control-label">最小值提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oMinMessage" maxlength="255" class="form-control" placeholder="最小值提示" ng-model="item.opts.minMessage">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='number'">
+                            <label class="col-md-3 control-label">最大值</label>
+                            <div class="col-md-9">
+                                <input type="number" name="oMax" class="form-control input-inline" placeholder="最大值" ng-model="item.opts.max">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="(item.opts.type=='number'&&!ggcmsForm.oMax.$pristine)||item.opts.minMessage!=''">
+                            <label class="col-md-3 control-label">最大值提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oMaxMessage" maxlength="255" class="form-control" placeholder="最大值提示" ng-model="item.opts.maxMessage">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="',text,url,email,password,textarea,richeditor,simpleditor,'.indexOf(','+item.opts.type+',')>-1">
+                            <label class="col-md-3 control-label">最小长度</label>
+                            <div class="col-md-9 ">
+                                <input type="number" name="oMinLength" class="form-control input-inline" placeholder="最小长度" max="255" min="0" ng-model="item.opts.minLength">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.minLength>0">
+                            <label class="col-md-3 control-label">最小长度提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oMinLengthMessage" maxlength="255" class="form-control" placeholder="最小长度提示" ng-model="item.opts.minLengthMessage">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="',text,url,email,password,textarea,richeditor,simpleditor,'.indexOf(','+item.opts.type+',')>-1">
+                            <label class="col-md-3 control-label">最大长度</label>
+                            <div class="col-md-9">
+                                <input type="number" name="oMaxLength" class="form-control input-inline" placeholder="最大长度" max="255" min="0" ng-model="item.opts.maxLength">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.maxLength>0">
+                            <label class="col-md-3 control-label">最大长度提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oMaxLengthMessage" maxlength="255" class="form-control" placeholder="最大长度提示" ng-model="item.opts.maxLengthMessage">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="',text,password,textarea,'.indexOf(','+item.opts.type+',')>-1">
+                            <label class="col-md-3 control-label">自定义验证</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oPattern" class="form-control" maxlength="255" placeholder="自定义验证(正则表达式)" ng-model="item.opts.pattern">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.pattern!=''">
+                            <label class="col-md-3 control-label">自定义验证提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oPatternMessage" maxlength="255" class="form-control" placeholder="自定义验证提示" ng-model="item.opts.patternMessage">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="',select,checkbox,radio,'.indexOf(','+item.opts.type+',')>-1">
+                            <label class="col-md-3 control-label">数据关联</label>
+                            <div class="col-md-9">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" ng-click="cbxchange($event)" ng-checked="item.opts.datasource=='sysenum'" id="oDatasource" name="oDatasource" ng-model="item.opts.datasource" ng-true-value="'sysenum'" ng-false-value="''" />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.datasource=='sysenum'">
+                            <label class="col-md-3 control-label">关联类型</label>
+                            <div class="col-md-9">
+                                <select class="form-control input-inline" name="oEgroup" id="oEgroup" ng-model="item.opts.egroup" ng-options="kv as kv for kv in sysenumgroups"></select>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='switch'">
+                            <label class="col-md-3 control-label">开-颜色</label>
+                            <div class="col-md-9">
+                                <select class="form-control input-inline" name="oOnColor" id="oOnColor" ng-model="item.opts.onColor" ng-options="kv.key as kv.val for kv in keyValues | filter:{type:'color'}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='switch'">
+                            <label class="col-md-3 control-label">开-文字</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oOnText" maxlength="255" class="form-control" placeholder="开-文字" ng-model="item.opts.onText">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='switch'">
+                            <label class="col-md-3 control-label">关-颜色</label>
+                            <div class="col-md-9">
+                                <select class="form-control input-inline" name="oOffColor" id="oOffColor" ng-model="item.opts.offColor" ng-options="kv.key as kv.val for kv in keyValues | filter:{type:'color'}">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='switch'">
+                            <label class="col-md-3 control-label">关-文字</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oOffText" maxlength="255" class="form-control" placeholder="关-文字" ng-model="item.opts.offText">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="',datetime,date,'.indexOf(','+item.opts.type+',')>-1">
+                            <label class="col-md-3 control-label">最小日期</label>
+                            <div class="col-md-6">
+                                <select class="form-control input-inline" name="dTypeMinDate" id="dTypeMinDate" ng-model="item.dateCfg.min.type" ng-options="kv.key as kv.val for kv in keyValues | filter:{type:'dtype'}">
+                                </select>
+                                <input type="number" popover="正数为选定日期之后，负数为选定日期之前" popover-trigger="mouseenter" name="oMinDateValue" class="form-control input-inline input-xsmall" ng-model="item.dateCfg.min.val">
+                                <select class="form-control input-inline" name="dKindMinDate" id="dKindMinDate" ng-model="item.dateCfg.min.kind" ng-options="kv.key as kv.val for kv in keyValues | filter:{type:'kind'}">
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group" ng-if="item.dateCfg.min.type=='c'">
+                                    <input type="text" id="cMinDate" name="cMinDate" class="form-control" datepicker-popup="{{datePicker.format}}" current-text="{{datePicker.currentText}}" is-open="item.dateCfg.min.opened" clear-text="{{datePicker.clearText}}" close-text="{{datePicker.closeText}}"
+                                        ng-model="item.dateCfg.min.curDate" datepicker-options="datePicker.options" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="datePicker.open($event,item.dateCfg.min)">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.dateCfg.min.getString()!=''">
+                            <label class="col-md-3 control-label">最小日期提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oMinDateMessage" maxlength="255" class="form-control" placeholder="最小日期提示" ng-model="item.opts.minDateMessage">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="',datetime,date,'.indexOf(','+item.opts.type+',')>-1">
+                            <label class="col-md-3 control-label">最大日期</label>
+                            <div class="col-md-6">
+                                <select class="form-control input-inline" name="dTypeMaxDate" id="dTypeMaxDate" ng-model="item.dateCfg.max.type" ng-options="kv.key as kv.val for kv in keyValues | filter:{type:'dtype'}">
+                                </select>
+                                <input type="number" popover="正数为选定日期之后，负数为选定日期之前" popover-trigger="mouseenter" name="oMaxDateValue" class="form-control input-inline input-xsmall" ng-model="item.dateCfg.max.val">
+                                <select class="form-control input-inline" name="dKindMaxDate" id="dKindMaxDate" ng-model="item.dateCfg.max.kind" ng-options="kv.key as kv.val for kv in keyValues | filter:{type:'kind'}">
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group" ng-if="item.dateCfg.max.type=='c'">
+                                    <input type="text" id="cMaxDate" name="cMaxDate" class="form-control" datepicker-popup="{{datePicker.format}}" current-text="{{datePicker.currentText}}" is-open="item.dateCfg.max.opened" clear-text="{{datePicker.clearText}}" close-text="{{datePicker.closeText}}"
+                                        ng-model="item.dateCfg.max.curDate" datepicker-options="datePicker.options" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="datePicker.open($event,item.dateCfg.max)">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.dateCfg.max.getString()!=''">
+                            <label class="col-md-3 control-label">最大日期提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oMaxDateMessage" maxlength="255" class="form-control" placeholder="最大日期提示" ng-model="item.opts.maxDateMessage">
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-if="item.opts.type=='file'">
+                            <label class="col-md-3 control-label">文件扩展名</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oExtension" maxlength="255" class="form-control" placeholder="允许上传的文件扩展名，多扩展名之间用逗号隔开" ng-model="item.opts.extension">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='file'&&item.opts.extension!=''">
+                            <label class="col-md-3 control-label">文件扩展名提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oExtensionMessage" maxlength="255" class="form-control" placeholder="文件扩展名提示" ng-model="item.opts.extensionMessage">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='file'">
+                            <label class="col-md-3 control-label">文件大小限制</label>
+                            <div class="col-md-9">
+                                <input type="number" min="0" name="oFileSize" class="form-control input-inline" placeholder="文件大小限制" ng-model="item.opts.fileSize">
+                                <span class="help-block help-inline"> kb </span>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='file'&&item.opts.fileSize!=''">
+                            <label class="col-md-3 control-label">文件大小限制提示</label>
+                            <div class="col-md-9">
+                                <input type="text" name="oFileSizenMessage" maxlength="255" class="form-control" placeholder="文件大小限制提示" ng-model="item.opts.fileSizenMessage">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="item.opts.type=='file'">
+                            <label class="col-md-3 control-label">是否可以预览</label>
+                            <div class="col-md-9">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" ng-click="cbxchange($event)" ng-checked="item.opts.preview" id="oPreview" name="oPreview" ng-model="item.opts.preview" />
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button type="button" ng-click="moreSettingFinish($index)" class="btn green btn-ok" data-dismiss="modal" ng-disabled="moreSettingCheck($index)">确定</button></div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- BEGIN MAIN JS -->
+<script>
+    function datePickerConfig() {
+        this.type = "c";
+        this.curDate = new Date();
+        this.val = 0;
+        this.kind = "d";
+        this.setString = function(str) {
+            if (!str) {
+                return;
+            }
+            if (/c$/.test(str)) {
+                str = str.replace(/c$/, "");
+                var dd = str.split(/[,;:|]/);
+                if (dd.length == 2) {
+                    var d = new Date(dd[0]);
+                    this.curDate = Date.parse(d);
+                    str = dd[1];
+                }
+                this.type = "c";
+            } else if (/v$/.test(str)) {
+                this.type = "v";
+                str = str.replace(/v$/, "");
+            } else {
+                this.type = "n";
+            }
+            this.kind = str[str.length - 1];
+            this.val = parseInt(str);
+        };
+        this.getString = function() {
+            if (!this.val || this.val == 0) {
+                return "";
+            }
+            var strVal = [];
+            if (this.type == "c") {
+                strVal.push(this.curDate.toString());
+                strVal.push(";");
+            }
+            strVal.push(this.val.toString());
+            strVal.push(this.kind);
+            if (this.type != "n") {
+                strVal.push(this.type);
+            }
+            return strVal.join("");
+        };
+    }
+    var infoData = {
+        data: [#.info],
+        postUrl: '/api/ggcms_modules/',
+        msgTitle: "模型",
+        msgShowInput: "Module_name",
+
+        defaultModule: {
+            Id: 0,
+            Tid: 0,
+            CName: "",
+            CTitle: "",
+            CType: "",
+            CLen: 0,
+            CDecimal: 0,
+            Options: "",
+            opts: {},
+            dateCfg: {
+                min: new datePickerConfig(),
+                max: new datePickerConfig(),
+            }
+        }
+    };
+
+    function ColumnsEditCtrl($scope, AJAX, $timeout) {
+        //提示
+        $scope.alerts = [{
+            key: "mcAlert_1",
+            type: 'danger',
+            msg: '修改数据库结构，可能会造成现有数据的丢失或溢出，请谨慎操作.',
+            show: true
+        }, {
+            key: "mcAlert_2",
+            type: 'success',
+            msg: '<b>强烈建议</b>操作前，先备份数据库。保留旧字段，添加新字段.',
+            show: true
+        }];
+        $scope.showAlertBtn = false;
+        for (var i in $scope.alerts) {
+            var close = Cookies.get($scope.alerts[i].key);
+            if (close) {
+                $scope.alerts[i].show = false;
+                $scope.showAlertBtn = true;
+            }
+        }
+        $scope.showAlert = function() {
+            for (var i in $scope.alerts) {
+                Cookies.set($scope.alerts[i].key, null, {
+                    expires: -1,
+                    path: '/'
+                });
+                $scope.alerts[i].show = true;
+            }
+            $scope.showAlertBtn = false;
+        }
+        $scope.closeAlert = function(alert) {
+            alert.show = false;
+            Cookies.set(alert.key, true, {
+                expires: 7,
+                path: '/'
+            });
+            $scope.showAlertBtn = true;
+        };
+
+        $scope.keyValues = ggcmsCfg.keyValues;
+        $scope.datePicker = ggcmsCfg.datePicker;
+        for (var i in $scope.data.Columns) {
+            var column = $scope.data.Columns[i];
+            column.opts = JSON.parse(column.Options);
+            column.dateCfg = {
+                min: new datePickerConfig(),
+                max: new datePickerConfig(),
+            };
+            column.dateCfg.min.setString(column.opts.minDate);
+            column.dateCfg.max.setString(column.opts.maxDate);
+        }
+        AJAX.load({
+            url: "/api/ggcms_sys_enum/groups",
+            method: 'GET',
+            func: function(retData) {
+                $scope.sysenumgroups = retData.Data;
+            }
+        });
+
+        if (!$scope.data.Columns) {
+            $scope.data.Columns = []
+        }
+        $scope.columnAdd = function() {
+            var column = angular.copy(infoData.defaultModule);
+            column.opts = angular.copy(ggcmsCfg.defaultOptions);
+            column.Options = JSON.stringify(column.opts);
+            $scope.data.Columns.push(column);
+        }
+        $scope.columnDel = function($index) {
+            var column = $scope.data.Columns[$index];
+            App.messageBox({
+                msg: "确认删除 “" + column.CTitle + "” 吗？",
+                icon: "question",
+                btn: "yes|no",
+                func: function() {
+                    $scope.data.Columns.splice($index, 1);
+                    $scope.$apply();
+                }
+            });
+        }
+
+        $scope.columnMoreSet = function($index) {
+            var modalId = "#setModal-" + $index;
+            App.initUniform();
+            $(modalId).modal();
+        }
+        $scope.cbxchange = function($event) {
+            //更新样式
+            App.updateUniform();
+        };
+        $scope.typeChange = function() {
+            var timer = $timeout(function() {
+                App.initUniform();
+                timer = null;
+            });
+        }
+        $scope.moreSettingCheck = function($index) {
+            var column = $scope.data.Columns[$index];
+            for (var property in column.opts) {
+                if (undefined === column.opts[property]) {
+                    return true
+                }
+            }
+            return false;
+        }
+        $scope.moreSettingFinish = function($index) {
+            var column = $scope.data.Columns[$index];
+            if (',datetime,date,'.indexOf(',' + column.opts.type + ',') > -1) {
+                column.opts.minDate = column.dateCfg.min.getString();
+                column.opts.maxDate = column.dateCfg.max.getString();
+            }
+            column.Options = JSON.stringify(column.opts);
+            console.log(column.Options);
+        }
+    };
+</script>
+<!-- END MAIN JS -->

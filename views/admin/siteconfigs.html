@@ -1,0 +1,82 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="ConfigsCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper">系统设置</span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#">Home</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" name="ggcmsForm" id="ggcmsForm" role="form" novalidate>
+                            <tabset>
+                                <tab heading="基本设置">
+                                    <div class="form-group" ng-repeat="item in data | filter:{Groupid:1} | orderBy:'Sortid'" ng-class="{'has-error' : ggcmsForm.{{item.Varname}}.$invalid&&!ggcmsForm.{{item.Varname}}.$pristine}">
+                                        <label class="col-md-3 control-label">{{item.Info}}</label>
+                                        <div class="col-md-9">
+                                            [#template "admin/tpl/forminput.html" .]
+                                        </div>
+                                    </div>
+                                </tab>
+                                <tab heading="界面显示">
+                                    <div class="form-group" ng-repeat="item in data | filter:{Groupid:2} | orderBy:'Sortid'" ng-class="{'has-error' : ggcmsForm.{{item.Varname}}.$invalid&&!ggcmsForm.{{item.Varname}}.$pristine}">
+                                        <label class="col-md-3 control-label">{{item.Info}}</label>
+                                        <div class="col-md-9">
+                                            [#template "admin/tpl/forminput.html" .]
+                                        </div>
+                                    </div>
+                                </tab>
+                                <tab heading="上传存储">
+                                    <div class="form-group" ng-repeat="item in data | filter:{Groupid:3} | orderBy:'Sortid'" ng-class="{'has-error' : ggcmsForm.{{item.Varname}}.$invalid&&!ggcmsForm.{{item.Varname}}.$pristine}">
+                                        <label class="col-md-3 control-label">{{item.Info}}</label>
+                                        <div class="col-md-9">
+                                            [#template "admin/tpl/forminput.html" .]
+                                        </div>
+                                    </div>
+                                </tab>
+                                <tab heading="性能相关">
+                                    <div class="form-group" ng-repeat="item in data | filter:{Groupid:4} | orderBy:'Sortid'" ng-class="{'has-error' : ggcmsForm.{{item.Varname}}.$invalid&&!ggcmsForm.{{item.Varname}}.$pristine}">
+                                        <label class="col-md-3 control-label">{{item.Info}}</label>
+                                        <div class="col-md-9">
+                                            [#template "admin/tpl/forminput.html" .]
+                                        </div>
+                                    </div>
+                                </tab>
+                            </tabset>
+                            <div class="form-actions">
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button class="btn green" ng-click="update(data)" ng-disabled="ggcmsForm.$invalid"> <span class="fa fa-save"></span> 保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS -->
+<script>
+    // Tabs demo controller
+    var configs = [#.configs];
+</script>
+<!-- END MAIN JS -->

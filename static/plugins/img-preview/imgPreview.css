@@ -1,0 +1,42 @@
+.imgPreview {
+    top: 0;
+    left: 0;
+    z-index: 9999 !important;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, .7);
+    position: fixed;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+    line-height: 1px;
+    text-align: center;
+    display: table;
+}
+
+.imgPreview .img {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.imgPreview .close {
+    background-image: none !important;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #fff;
+    opacity: .6;
+    font-size: 30px;
+    background-color: #000;
+    text-indent: 0;
+    height: 42px;
+    width: 42px;
+    border-radius: 50%;
+    border-color: #fff;
+    border-style: solid;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.imgPreview .close:hover {
+    opacity: 1;
+}

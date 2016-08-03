@@ -1,0 +1,41 @@
+[#if .pages.ShowPagination]
+<ul class="pagination bootpag pull-right">
+    [#if .pages.IsFirstPage]
+    <li class="disabled">
+        <a href="javascript:;">
+            <i class="fa fa-angle-double-left"></i>
+        </a>
+    </li>
+    <li class="prev disabled"><a href="javascript:void(0);"><i class="fa fa-angle-left"></i></a></li>
+    [#else]
+    <li>
+        <a href="[#.pages.FirstPageUrl]">
+            <i class="fa fa-angle-double-left"></i>
+        </a>
+    </li>
+    <li class="prev"><a href="[#.pages.PrevPageUrl]"><i class="fa fa-angle-left"></i></a></li>
+    [#end] [#range $i,$pn:=.pages.PageList] [#if eq $.pages.PageNum $pn]
+    <li class="next disabled">
+        <a href="javascript:void(0);"> [#$pn] </a>
+    </li>
+    [#else]
+    <li>
+        <a href="[#index $.pages.PageUrls $i]"> [#$pn] </a>
+    </li>
+    [#end] [#end] [#if .pages.IsLastPage]
+    <li class="next disabled"><a href="javascript:void(0);"><i class="fa fa-angle-right"></i></a></li>
+    <li class="disabled">
+        <a href="javascript:;">
+            <i class="fa fa-angle-double-right"></i>
+        </a>
+    </li>
+    [#else]
+    <li class="next"><a href="[#.pages.NextPageUrl]"><i class="fa fa-angle-right"></i></a></li>
+    <li>
+        <a href="[#.pages.LastPageUrl]">
+            <i class="fa fa-angle-double-right"></i>
+        </a>
+    </li>
+    [#end]
+</ul>
+[#end]

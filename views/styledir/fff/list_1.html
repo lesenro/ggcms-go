@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+
+<head>
+
+</head>
+<!-- END HEAD -->
+
+<body class="">
+    <p>
+        [# .stylepath]
+    </p>
+    <p>
+        [# .configs.cfg_webname]
+    </p>
+    <p>
+        [#range $index, $elem := .articlelist]
+        <p>
+            <span>[# $elem.Id]</span>
+            <span><a href="/article/[# $elem.Id]/">[# $elem.Title]</a> </span>
+            <span>[# $elem.Categoryid]</span>
+            <span>[# $elem.Dateandtime]</span>
+        </p>
+        [# end]
+    </p>
+    <p>
+        [#template "admin/tpl/pagination.html" .]
+    </p>
+</body>
+
+</html>

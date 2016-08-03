@@ -1,0 +1,253 @@
+<div class="page-sidebar navbar-collapse collapse">
+    <!-- BEGIN SIDEBAR MENU -->
+    <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+    <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+    <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+    <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+    <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+    <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" ng-class="{'page-sidebar-menu-closed': settings.layout.pageSidebarClosed}">
+        <li class="heading">
+            <h3>后台管理</h3>
+        </li>
+        <li class="start">
+            <a href="#/home.html">
+                <i class="icon-home"></i>
+                <span class="title">首页</span>
+            </a>
+        </li>
+        <li>
+            <a href="javascript:;">
+                <i class="icon-settings"></i>
+                <span class="title">通用设置</span>
+                <span class="arrow "></span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/systemconfigs.html">
+                        <i class="icon-paper-clip"></i> 系统设置
+                    </a>
+                </li>
+                <li>
+                    <a href="#/sitesetting.html">
+                        <i class="fa fa-sitemap"></i> 站点管理
+                    </a>
+                </li>
+                <li>
+                    <a href="#/modulesdesign.html">
+                        <i class="fa fa-cogs"></i> 模型设计
+                    </a>
+                </li>
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="fa fa-book"></i> 系统字典
+                    </a>
+                </li>
+                <li>
+                    <a href="#/styledesign.html">
+                        <i class="icon-social-dropbox"></i> 风格模板
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="javascript:;">
+                <i class="icon-screen-desktop"></i>
+                <span class="title">系统维护</span>
+                <span class="arrow "></span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="icon-magic-wand"></i> 数据采集规则
+                    </a>
+                </li>
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="fa fa-code"></i> 运行SQL语句
+                    </a>
+                </li>
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="fa fa-get-pocket"></i> 生成静态
+                    </a>
+                </li>
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="fa fa-tasks"></i> 任务管理
+                    </a>
+                </li>
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="fa fa-flag-o"></i> 系统日志维护
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="javascript:;">
+                <i class="icon-globe"></i>
+                <span class="title">网站内容管理</span>
+                <span class="arrow "></span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/siteconfigs.html">
+                        <i class="icon-wrench"></i> 网站设置
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#/ui_bootstrap.html">
+                        <i class="icon-grid"></i>
+                        <span class="title">栏目管理</span>
+                        <span class="arrow "></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#/category.html">
+                                <i class="icon-list"></i>
+                                <span class="title">栏目分类</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/ui_bootstrap.html">
+                                <i class="fa fa-flag-checkered"></i>
+                                <span class="title">专题管理</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/ui_bootstrap.html">
+                                <i class="fa fa-cubes"></i>
+                                <span class="title">论坛分类</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#/ui_bootstrap.html">
+                        <i class="fa fa-building-o"></i>
+                        <span class="title">文章内容相关</span>
+                        <span class="arrow "></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#/articlelist.html">
+                                <i class="fa fa-check"></i>
+                                <span class="title">文章管理</span>
+                                <span class="badge badge-success">已发布</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/rearticlelist.html">
+                                <i class="fa fa-check-square-o"></i>
+                                <span class="title">文章管理</span>
+                                <span class="badge badge-danger">待审核</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/onearticlelist.html">
+                                <i class="fa fa-file-text-o"></i> 单页文章
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#/ui_bootstrap.html">
+                        <i class="icon-target"></i> 站内关键词</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/ui_select.html">
+                        <i class="fa fa-comments-o"></i> 评论管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="fa fa-link"></i> 友情链接
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="javascript:;">
+                <i class="icon-users"></i>
+                <span class="title">会员及权限</span>
+                <span class="arrow "></span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/pickers">
+                        <i class="fa fa-star-half-full"></i> 管理员级别 </a>
+                </li>
+                <li>
+                    <a href="#/form-tools">
+                        <i class="fa fa-user"></i> 会员管理 </a>
+                </li>
+                <li>
+                    <a href="#/pickers">
+                        <i class="fa fa-users"></i> 管理员分组 </a>
+                </li>
+                <li>
+                    <a href="#/pickers">
+                        <i class="fa fa-user-secret"></i> 管理员管理 </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="javascript:;">
+                <i class="icon-share"></i>
+                <span class="title">第三方管理</span>
+                <span class="arrow "></span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/form-tools">
+                        <i class="fa fa-weixin"></i> 微信公众号 </a>
+                </li>
+                <li>
+                    <a href="#/pickers">
+                        <i class="fa fa-qq"></i> QQ公众号 </a>
+                </li>
+                <li>
+                    <a href="#/pickers">
+                        <i class="fa fa-weibo"></i> 新浪微博 </a>
+                </li>
+                <li>
+                    <a href="#/pickers">
+                        <i class="fa fa-delicious"></i> 支付宝 </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="javascript:;">
+                <i class="icon-puzzle"></i>
+                <span class="title">辅助功能</span>
+                <span class="arrow "></span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="icon-badge"></i> 广告投放
+                    </a>
+                </li>
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="icon-volume-1"></i> 系统公告
+                    </a>
+                </li>
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="icon-bar-chart"></i> 投票调查
+                    </a>
+                </li>
+                <li>
+                    <a href="#/systemdict.html">
+                        <i class="fa fa-folder-o"></i> 文件管理器
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <!-- END SIDEBAR MENU -->
+</div>

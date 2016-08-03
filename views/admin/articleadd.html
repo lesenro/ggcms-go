@@ -1,0 +1,642 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="DataEditUploadCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper">系统设置</span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">管理首页</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body" ng-controller="FormBodyCtrl">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" name="ggcmsForm" role="form" novalidate>
+                            <input type="hidden" value="[#.info.Id]" ng-model="data.Id">
+                            <tabset>
+                                <tab heading="基本设置">
+                                    <div class="form-body" ng-controller="TabPage1Ctrl">
+                                        <div class="form-group" ng-class="{'has-error' : ggcmsForm.Title.$invalid&&!ggcmsForm.Title.$pristine}">
+                                            <label class="col-md-3 control-label">文章标题</label>
+                                            <div class="col-md-9">
+                                                <input type="text" name="Title" minlength="2" maxlength="30" class="form-control" placeholder="文章标题" ng-model="data.Title" required>
+                                                <span class="help-block" ng-show="ggcmsForm.Title.$invalid&&!ggcmsForm.Title.$pristine"> 文章标题请输入2到30个的字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" ng-if="atype!=0">
+                                            <label class="col-md-3 control-label">所属栏目</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Categoryid.$invalid&&!ggcmsForm.Categoryid.$pristine}">
+                                                <button class="btn btn-default btn-outline" type="button" data-toggle="collapse" data-target="#collapsePid" aria-expanded="false" aria-controls="collapseExample">
+                                                    {{getPidName(data.CategoryidAbs)}}
+                                     	        </button>
+                                                <input type="number" min="1" name="Categoryid" id="Categoryid" ng-model="data.CategoryidAbs" class="hidden">
+                                                <div class="collapse margin-top-10" id="collapsePid">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-body">
+                                                            <div data-angular-treeview="true" data-tree-id="pidTree" data-tree-model="treedata" data-node-id="id" data-node-label="label" data-node-children="children">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">跳转URL</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.AUrl.$invalid&&!ggcmsForm.AUrl.$pristine}">
+                                                <input type="text" name="AUrl" maxlength="255" class="form-control" placeholder="跳转URL" ng-model="data.AUrl">
+                                                <span class="help-block"> 设置后将忽略其他设置，直接跳转 </span>
+                                                <span class="help-block" ng-show="ggcmsForm.AUrl.$invalid&&!ggcmsForm.AUrl.$pristine"> 不得超出255个字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">标题图片</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.btn_TitleImg.$invalid&&!ggcmsForm.btn_TitleImg.$pristine}">
+                                                <div class="input-inline input-xlarge">
+                                                    <div class="input-group input-icon">
+                                                        <i class="icon-picture" ng-if="data.TitleImg!=''" ng-click="preview('TitleImg')"></i>
+                                                        <div type="text" class="form-control"> {{data.TitleImg}} </div>
+                                                        <span class="input-group-btn">
+                                                <button class="btn blue fileupload" ngf-max-size="'200kb'" ngf-accept="'image/*'" ngf-pattern="'image/*'" ngf-select="upload($file,'TitleImg',true)" type="button" id="btn_TitleImg" name="btn_TitleImg" ng-model="btn_TitleImg" >选择图片</button>
+                                                <button class="btn red" id="TitleImg_Clear" name="TitleImg_Clear" ng-if="data.TitleImg!=''" ng-click="fileclear('TitleImg')">清除</button>
+                                                </span>
+                                                    </div>
+                                                    <span class="help-block" ng-show="ggcmsForm.btn_TitleImg.$invalid&&!ggcmsForm.btn_TitleImg.$pristine"> 必须上传图片,且大小不能超过200kb</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">页标题</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Pagetitle.$invalid&&!ggcmsForm.Pagetitle.$pristine}">
+                                                <input type="text" name="Pagetitle" maxlength="255" class="form-control" placeholder="页标题" ng-model="pageInfo.Title">
+                                                <span class="help-block" ng-show="ggcmsForm.Pagetitle.$invalid&&!ggcmsForm.Pagetitle.$pristine"> 不得超出255个字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">文章内容</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Content.$invalid&&!ggcmsForm.Content.$pristine}">
+                                                <div class="toolbar margin-bottom-10">
+                                                    <button type="button" class="btn green-haze" ng-click="pageadd(1)">
+                                                                    <i class="fa fa-plus"></i> 追加</button>
+                                                    <button type="button" class="btn green-haze" ng-click="pageadd(0)">
+                                                                    <i class="fa fa-plus-square-o"></i> 插入</button>
+                                                    <button type="button" class="btn green" ng-disabled="pagenum==1" ng-click="changePage(pagenum-1)">
+                                                                    <i class="fa fa-chevron-left"></i> 上页</button>
+                                                    <button type="button" class="btn green" ng-disabled="pagenum>=data.Pages.length" ng-click="changePage(pagenum+1)">
+                                                                     下页 <i class="fa fa-chevron-right"></i></button>
+                                                    <select class="form-control input-inline" name="articlePages" id="articlePages" ng-change="changePage(pagenum)" ng-model="pagenum" ng-options="kv.Sortid as '第'+kv.Sortid+'页' for kv in data.Pages"></select>
+                                                    <button type="button" class="btn red" ng-disabled="pagenum==1" ng-click="deletePage(pagenum)">
+                                                                    <i class="fa fa-times"></i> 删除</button>
+                                                </div>
+                                                <summernote config="editoptions" id="Content" name="Content" class="form-control" placeholder="文章内容" ng-model="pageInfo.Content" on-image-upload="imageUpload(files,'Content')"></summernote>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </tab>
+                                <tab heading="其他设置">
+                                    <div class="form-body" ng-controller="TabPage2Ctrl">
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">风格</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Styledir.$invalid&&!ggcmsForm.Styledir.$pristine}">
+                                                <select class="form-control input-inline" name="Styledir" id="Styledir" ng-change="styleChange(data.Styledir)" ng-model="data.Styledir" ng-options="kv.Style_folder as kv.Style_name for kv in style.style">
+                                                    <option value="" selected>---请选择---</option> 
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">文章模板</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Tempname.$invalid&&!ggcmsForm.Tempname.$pristine}">
+                                                <select class="form-control input-inline" name="Tempname" id="Tempname" ng-model="data.Tempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'view'}:templateFilter">
+                                                    <option value="" selected>---请选择---</option> 
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">作者</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Author.$invalid&&!ggcmsForm.Author.$pristine}">
+                                                <input type="text" name="Author" ng-maxlength="255" class="form-control" placeholder="作者" ng-model="data.Author">
+                                                <span class="help-block" ng-show="ggcmsForm.Author.$invalid&&!ggcmsForm.Author.$pristine"> 最多不能超过255个字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">推荐方式</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Author.$invalid&&!ggcmsForm.Author.$pristine}">
+                                                <input type="text" name="Author" ng-maxlength="255" class="form-control" placeholder="作者" ng-model="data.Author">
+                                                <span class="help-block" ng-show="ggcmsForm.Author.$invalid&&!ggcmsForm.Author.$pristine"> 最多不能超过255个字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">推荐级别</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Author.$invalid&&!ggcmsForm.Author.$pristine}">
+                                                <input type="text" name="Author" ng-maxlength="255" class="form-control" placeholder="作者" ng-model="data.Author">
+                                                <span class="help-block" ng-show="ggcmsForm.Author.$invalid&&!ggcmsForm.Author.$pristine"> 最多不能超过255个字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">文章来源</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Source.$invalid&&!ggcmsForm.Source.$pristine}">
+                                                <input type="text" name="Source" maxlength="255" class="form-control" placeholder="文章来源" ng-model="data.Source">
+                                                <span class="help-block" ng-show="ggcmsForm.Source.$invalid&&!ggcmsForm.Source.$pristine"> 文章来源名称不能超过255个字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">来源URL</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.SourceUrl.$invalid&&!ggcmsForm.SourceUrl.$pristine}">
+                                                <input type="url" name="SourceUrl" maxlength="255" class="form-control" placeholder="来源URL" ng-model="data.SourceUrl">
+                                                <span class="help-block" ng-show="ggcmsForm.SourceUrl.$invalid&&!ggcmsForm.SourceUrl.$pristine"> 文章来源URL不能超过255个字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">页面Keywords</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Keywords.$invalid&&!ggcmsForm.Keywords.$pristine}">
+                                                <input type="text" name="Keywords" ng-maxlength="255" class="form-control" placeholder="页面Keywords" ng-model="data.Keywords">
+                                                <span class="help-block" ng-show="ggcmsForm.Keywords.$invalid&&!ggcmsForm.Keywords.$pristine"> 最多不能超过255个字符 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">页面Description</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Description.$invalid&&!ggcmsForm.Description.$pristine}">
+                                                <input type="text" name="Description" ng-maxlength="255" class="form-control" placeholder="页面Description" ng-model="data.Description">
+                                                <span class="help-block" ng-show="ggcmsForm.Description.$invalid&&!ggcmsForm.Description.$pristine"> 最多不能超过255个字符 </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </tab>
+                                <tab heading="附件">
+                                    <div class="form-body" ng-controller="TabPage3Ctrl">
+                                        <div class="clearfix">
+                                            <p>
+                                                <button class="btn blue fileupload" ngf-select="attachsupload($file)" type="button" id="btn_attr_upload" name="btn_attr_upload">选择附件</button>
+                                            </p>
+                                        </div>
+                                        <div class="form-group" ng-repeat="item in data.attachs |filter:attaFilter">
+                                            <label class="col-md-3 control-label">{{item.Originalname}}</label>
+                                            <div class="col-md-6">
+                                                <input type="text" ng-maxlength="255" class="form-control" ng-model="item.Info">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn blue" ng-if="IsImage(item)" ng-click="attaPreview(item.AttrUrl)" popover="图片地址:{{item.AttrUrl}}" popover-trigger="mouseenter">
+                                                <i class="icon-picture"></i> 预览</button>
+                                                <button type="button" class="btn red" ng-click="attaDel(item)">
+                                                <i class="fa fa-times"></i> 删除</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </tab>
+                                <tab heading="自定义模型" ng-if="data.Mid>0">
+                                    <div class="form-body" ng-controller="TabPage4Ctrl">
+                                        <div class="form-group" ng-repeat="item in data.modulesCols | orderBy:'Id'" ng-class="{'has-error' : ggcmsForm.{{item.CName}}.$invalid&&!ggcmsForm.{{item.CName}}.$pristine}">
+                                            <label class="col-md-3 control-label">{{item.CTitle}}</label>
+                                            <div class="col-md-9">
+                                                [#template "admin/tpl/forminput.html" .]
+                                            </div>
+                                        </div>
+                                    </div>
+                                </tab>
+                            </tabset>
+
+                            <div class="form-actions">
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button class="btn green" ng-click="update(data)" ng-disabled="ggcmsForm.$invalid"> <span class="fa fa-save"></span> 保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS -->
+<script>
+    var infoData = {
+        data: [#.info],
+        postUrl: '/api/ggcms_article/',
+        msgTitle: "文章",
+        msgShowInput: "Title",
+        ProcessData: function(data) {
+            //转换数字和多选内容
+            for (var i in data.modulesCols) {
+                data.modulesCols[i].Value = data.modulesCols[i].Value || "";
+                if (data.modulesCols[i].opts.type == "number") {
+                    data.modulesCols[i].Value = data.modulesCols[i].Value.toString();
+                }
+                if (data.modulesCols[i].opts.type == "select" && data.modulesCols[i].opts.multiple) {
+                    data.modulesCols[i].Value = data.modulesCols[i].Value.join(",");
+                }
+                if (data.modulesCols[i].opts.type == "switch") {
+                    data.modulesCols[i].Value = $("#cfg_indexname").bootstrapSwitch("state") ? "on" : ""
+                }
+                //日期转换
+                if (data.modulesCols[i].opts.type == "date" || data.modulesCols[i].opts.type == "datetime") {
+                    var d = data.modulesCols[i].Value;
+                    if ($.type(d) != "date") {
+                        d = new Date(d);
+                    }
+                    data.modulesCols[i].Value = App.dateFormat(d, "yyyy-MM-dd hh:mm:ss") || data.modulesCols[i].Value;
+                }
+                //文件
+                if (data.modulesCols[i].opts.type == "file") {
+                    data.modulesCols[i].Value = data.modulesCols[i].FileValue;
+                }
+                //清除多余数据
+                delete data.modulesCols[i].Options;
+                delete data.modulesCols[i].opts;
+                delete data.modulesCols[i].Info;
+                delete data.modulesCols[i].Tid;
+                delete data.modulesCols[i].Varname;
+                delete data.modulesCols[i].CIndex;
+                delete data.modulesCols[i].CLen;
+                delete data.modulesCols[i].CTitle;
+            }
+            delete data.modulesData;
+        },
+    };
+    angular.module('GgcmsApp', ['angularTreeview', 'summernote']);
+
+    function FormBodyCtrl($scope, AJAX, $timeout) {
+        $scope.data.CategoryidAbs = Math.abs($scope.data.Categoryid);
+        $scope.clist = [#.list];
+        //存放模型配置信息
+        var modules = {};
+        $scope.data.Mid = 0;
+        //数组，用于显示
+        $scope.data.modulesCols = [];
+        //map
+        $scope.data.modulesData = {};
+        $scope.dict = {};
+        $scope.modulesInfo = [#.minfo];
+        //读取模型信息
+        $scope.loadModuleData = function(mid) {
+            if (mid > 0) {
+                if (!modules["m_" + mid]) {
+                    AJAX.load({
+                        url: "/api/ggcms_modules/getcolumns/" + mid,
+                        method: "GET",
+                        func: function(retData) {
+                            modules["m_" + mid] = moduleDataInit(retData.Data);
+                            $scope.data.modulesCols = modules["m_" + mid];
+                            $timeout(function() {
+                                //更新表单控件样式
+                                App.initUniform();
+                            });
+                        }
+                    });
+                } else {
+                    $scope.data.modulesCols = modules["m_" + mid];
+                    $timeout(function() {
+                        //更新表单控件样式
+                        App.initUniform();
+                    });
+                }
+            }
+            $scope.data.Mid = mid;
+        };
+        var moduleDataInit = function(datalist) {
+            $scope.data.modulesData = {};
+            //初始化基础数据
+            for (i in datalist) {
+                //和配置同步
+                datalist[i].Varname = datalist[i].CName;
+                datalist[i].Info = datalist[i].CTitle;
+                if ($scope.modulesInfo) {
+                    datalist[i].Value = $scope.modulesInfo[0][datalist[i].CName];
+                } else {
+                    datalist[i].Value = "";
+                }
+                var option = $.trim(datalist[i].Options) == "" ? "{}" : datalist[i].Options;
+                option = eval("(" + option + ")");
+                var tmp = {};
+                datalist[i].opts = $.extend(tmp, ggcmsCfg.defaultOptions, option);
+                //数字转换
+                if (tmp.type == "number") {
+                    try {
+                        if (datalist[i].Value.indexOf(".") == -1) {
+                            datalist[i].Value = parseInt(datalist[i].Value);
+                        } else {
+                            datalist[i].Value = parseFloat(datalist[i].Value);
+                        }
+                    } catch (e) {
+                        datalist[i].Value = 0;
+                    }
+                }
+                //多选转为数组
+                if (datalist[i].opts.type == "select" && datalist[i].opts.multiple) {
+                    datalist[i].Value = datalist[i].Value.split(",");
+                }
+                //日期转换
+                if (tmp.type == "date" || tmp.type == "datetime") {
+                    datalist[i].Value = Date.parse(datalist[i].Value);
+                }
+                //获取字典数据
+                if ((tmp.type == "select" || tmp.type == "checkbox" || tmp.type == "radio") && tmp.datasource == "sysenum" && "" != tmp.egroup) {
+                    AJAX.load({
+                        url: "/api/ggcms_sys_enum",
+                        method: 'GET',
+                        showmsg: false,
+                        params: {
+                            query: "egroup:" + tmp.egroup
+                        },
+                        func: function(retData, a, b, c) {
+                            var reg = /egroup:(\w+)[^;|,]*/gi;
+                            var egroup = reg.exec(c.params.query)[1];
+                            $scope.dict[egroup] = retData.Data;
+                        }
+                    });
+                }
+                //文件
+                if (tmp.type == "file") {
+                    datalist[i].FileValue = datalist[i].Value;
+                }
+                $scope.data.modulesData[datalist[i].CName] = datalist[i];
+            }
+            return datalist;
+        };
+        //初始化模型
+        for (i in $scope.clist) {
+            var item = $scope.clist[i];
+            if (item.Id == $scope.data.CategoryidAbs) {
+                if (item.Mid > 0) {
+                    $scope.loadModuleData(item.Mid);
+                }
+                break;
+            }
+        }
+        //初始化checkbox判断是否选中
+        $scope.cbxselect = function(k, v) {
+            return ("," + k + ",").indexOf("," + v + ",") > -1;
+        };
+        //checkbox修改
+        $scope.cbxchange = function(k, v, $event) {
+            //更新样式
+            App.updateUniform();
+            var sel = [];
+            $("input[name='" + k + "']:checked").each(function(e) {
+                sel.push($(this).val());
+            });
+            $scope.data.modulesData[k].Value = sel.join(",");
+        };
+        //日期
+        $scope.datePicker = ggcmsCfg.datePicker;
+        $scope.timePicker = ggcmsCfg.timePicker;
+        //时间
+        //初始化富文本编辑框
+        $scope.richeditor = {
+            lang: "zh-CN",
+        };
+        $scope.simpleditor = {
+            lang: "zh-CN",
+            toolbar: [
+                ['color', ['color']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['para', ['ul', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link']]
+            ]
+        };
+        //页面加载完成后，处理内容
+        $timeout(function() {
+            //更新表单控件样式
+            App.initUniform();
+        });
+
+
+    }
+
+    function TabPage1Ctrl($scope, $timeout, $stateParams, AJAX) {
+        $scope.atype = parseInt($stateParams.type);
+        $scope.data.Pages = [];
+        $scope.data.DeletePages = [];
+        //多页处理
+        var pcount = [#.pagecount]
+        $scope.pageInfo = {
+            Id: 0,
+            Articleid: infoData.data.Id,
+            Content: infoData.data.Content,
+            Title: infoData.data.Pagetitle,
+            Sortid: 1,
+            OldSortid: 1,
+        };
+        $scope.pagenum = 1;
+        $scope.data.Pages.push($scope.pageInfo);
+        //初始化分页
+        for (var i = 1; i < pcount; i++) {
+            var pinfo = {
+                Id: 0,
+                Articleid: infoData.data.Id,
+                Content: "",
+                Title: "",
+                Sortid: i + 1,
+                OldSortid: i + 1,
+            };
+            $scope.data.Pages.push(pinfo);
+        }
+        //添加页,1追加，0插入
+        $scope.pageadd = function(addtype) {
+            var pn = $scope.data.Pages.length + 1;
+            if (addtype == 0) {
+                pn = $scope.pagenum;
+                //后面的页码都加1
+                for (var i = pn - 1; i < $scope.data.Pages.length; i++) {
+                    $scope.data.Pages[i].Sortid = i + 2;
+                    if ($scope.data.Pages[i].OldSortid == 1) {
+                        $scope.data.Pages[i].OldSortid = 0;
+                    }
+                }
+            }
+            var pinfo = {
+                Id: 0,
+                Articleid: infoData.data.Id,
+                Content: "",
+                Title: "",
+                Sortid: pn,
+                OldSortid: 0,
+            };
+            $scope.data.Pages.push(pinfo);
+            $scope.data.Pages.sort(function(p1, p2) {
+                return p1.Sortid - p2.Sortid;
+            });
+            $scope.changePage(pn);
+        };
+        //分页修改
+        $scope.changePage = function(pn) {
+            $scope.pagenum = pn;
+            $scope.pageInfo = $scope.data.Pages[pn - 1];
+
+            if ($scope.data.Id > 0 && $scope.pageInfo.Id == 0 && $scope.pageInfo.OldSortid > 1) {
+                AJAX.load({
+                    url: "/api/ggcms_article/pageinfo",
+                    method: "GET",
+                    params: {
+                        aid: $scope.data.Id,
+                        sid: $scope.pageInfo.OldSortid,
+                        showmsg: false,
+                    },
+                    func: function(retData) {
+                        $scope.data.Pages[pn - 1].Id = retData.Data.Id;
+                        $scope.data.Pages[pn - 1].Content = retData.Data.Content;
+                        $scope.data.Pages[pn - 1].Title = retData.Data.Title;
+                        $scope.pageInfo = $scope.data.Pages[pn - 1];
+                    }
+                });
+            }
+        };
+        //删除分页
+        $scope.deletePage = function(pn) {
+            if ($scope.pageInfo.Id > 0) {
+                $scope.data.DeletePages.push($scope.pageInfo.Id);
+            }
+            $scope.data.Pages.splice(pn - 1, 1);
+            for (var i = pn - 1; i < $scope.data.Pages.length; i++) {
+                $scope.data.Pages[i].Sortid = i + 1;
+            }
+            if (pn > $scope.data.Pages.length) {
+                pn = $scope.data.Pages.length;
+            }
+            $scope.changePage(pn);
+        };
+        //选择栏目
+        $scope.getPidName = function(pid) {
+            for (i in $scope.clist) {
+                var item = $scope.clist[i];
+                if (item.Id == Math.abs(pid)) {
+                    return item.Categoryname;
+                }
+            }
+            return "--未设置栏目--";
+        };
+        $scope.treedata = CreateTreeData(0, $scope.clist);
+
+        $scope.pidTree = {};
+        $scope.$watch('pidTree.currentNode', function(newObj, oldObj) {
+            if ($scope.pidTree && angular.isObject($scope.pidTree.currentNode)) {
+                $scope.data.Categoryid = $scope.pidTree.currentNode.id * $scope.atype;
+                $scope.data.CategoryidAbs = $scope.pidTree.currentNode.id;
+
+                for (i in $scope.clist) {
+                    var item = $scope.clist[i];
+                    if (item.Id == $scope.data.CategoryidAbs) {
+                        $scope.data.Styledir = item.Styledir;
+                        $scope.data.Atempname = item.Atempname;
+                        $scope.loadModuleData(item.Mid);
+                        break;
+                    }
+                }
+                $("#collapsePid").collapse('toggle');
+            }
+        }, false);
+        $scope.editoptions = {
+            height: 200,
+            lang: "zh-CN",
+        };
+
+        $timeout(function() {
+            //更新表单控件样式
+            App.initUniform();
+        });
+    }
+
+    function TabPage2Ctrl($scope) {
+        $scope.style = [#.style];
+        //风格修改
+        $scope.styleChange = function(dir) {
+            $scope.style.template = $scope.style["t_" + dir];
+        };
+        //模板过滤
+        $scope.templateFilter = function(name, val) {
+            var reg = eval("/" + val + "_/i");
+            return reg.test(name);
+        };
+        $scope.styleChange($scope.data.Styledir);
+    }
+
+    function TabPage3Ctrl($scope, FileUpload) {
+        $scope.data.attachs = [#.attachs];
+        $scope.data.attachs = $scope.data.attachs || [];
+        $scope.attachsupload = function(file) {
+            if (!file) {
+                return false;
+            }
+            FileUpload.send({
+                file: file,
+                siteid: $scope.settings.currentSite,
+                func: function(resp) {
+                    var attInfo = {
+                        Id: 0,
+                        Articleid: $scope.data.Id,
+                        AttrUrl: resp.data.Data,
+                        Info: file.name,
+                        Originalname: file.name,
+                        Size: file.size,
+                    };
+                    $scope.data.attachs.push(attInfo);
+                }
+            });
+        };
+        $scope.attaDel = function(item) {
+            var index = -1;
+            for (var i in $scope.data.attachs) {
+                if ($scope.data.attachs[i].AttrUrl == item.AttrUrl) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index > -1) {
+                if ($scope.data.attachs[index].Id == 0) {
+                    $scope.data.attachs.splice(index, 1);
+                } else {
+                    $scope.data.attachs[index].Id = -$scope.data.attachs[index].Id;
+                }
+            }
+        };
+        $scope.IsImage = function(item) {
+            return (/(\.png|\.jpg|\.jpeg|\.gif)$/i).test(item.Originalname);
+        };
+        $scope.attaPreview = function(url) {
+            preView.show(url);
+        };
+        $scope.attaFilter = function(item) {
+            return item.Id >= 0;
+        };
+    }
+
+    function TabPage4Ctrl($scope) {
+
+    }
+    var CreateTreeData = function(pid, list) {
+        var data = [];
+        for (i in list) {
+            var item = list[i];
+            if (item.Id == infoData.data.Id) {
+                continue;
+            }
+            if (item.Pid == pid) {
+                var v = {
+                    "label": item.Categoryname,
+                    "id": item.Id,
+                    "children": CreateTreeData(item.Id, list)
+                };
+                data.push(v);
+            }
+        }
+        return data;
+    }
+</script>
+<!-- END MAIN JS -->
