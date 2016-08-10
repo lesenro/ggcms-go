@@ -16,14 +16,9 @@ type AdminPagesController struct {
 
 // @router / [get]
 func (c *AdminPagesController) AdminMain() {
-	temps := c.cacheman.CacheSystemConfigs()
+	//temps := c.cacheman.CacheSystemConfigs()
 	cfgs := make(map[string]string)
 	cfgs["cfg_prefixpath"] = beego.AppConfig.String("prefixpath")
-	cfgs["cfg_logo"] = temps["cfg_logo"].Value
-	cfgs["cfg_basehost"] = temps["cfg_basehost"].Value
-	cfgs["cfg_indexurl"] = temps["cfg_indexurl"].Value
-	cfgs["cfg_webname"] = temps["cfg_webname"].Value
-	cfgs["cfg_indexname"] = temps["cfg_indexname"].Value
 	c.Data["configs"] = cfgs
 	c.TplName = "admin/index.html"
 }
@@ -109,8 +104,21 @@ func (c *AdminPagesController) AdminCategoryAdd() {
 		imgh, _ := strconv.Atoi(temps["cfg_ddimg_height"].Value)
 		tmplview := temps["cfg_template_view"].Value
 		tmpllist := temps["cfg_template_list"].Value
+		mtmplview := temps["cfg_template_m_view"].Value
+		mtmpllist := temps["cfg_template_m_list"].Value
 		tmplstyle := temps["cfg_default_style"].Value
-		c.Data["info"] = models.GgcmsCategory{Pagesize: int(adminpagesize), NavPages: int(navigatepages), Imgwidth: imgw, Imgheight: imgh, Styledir: tmplstyle, Ctempname: tmpllist, Atempname: tmplview}
+		c.Data["info"] = models.GgcmsCategory{
+			Pagesize:      int(adminpagesize),
+			NavPages:      int(navigatepages),
+			Imgwidth:      imgw,
+			Imgheight:     imgh,
+			Styledir:      tmplstyle,
+			Ctempname:     tmpllist,
+			Atempname:     tmplview,
+			Mob_list_temp: mtmpllist,
+			Mob_view_temp: mtmplview,
+			Ctype:         1,
+		}
 	} else {
 		c.Data["info"] = info
 	}
@@ -129,6 +137,7 @@ func (c *AdminPagesController) AdminArticleList() {
 	if v, err := c.GetInt("type"); err == nil {
 		atype = v
 	}
+	csite := "siteid:" + strconv.Itoa(c.currentSite)
 	typeof := "categoryid.gt:0"
 	if atype == 0 {
 		typeof = "categoryid:0"
@@ -138,14 +147,14 @@ func (c *AdminPagesController) AdminArticleList() {
 	qsstr := c.GetString("qs")
 	var qs models.Query
 	if err := json.Unmarshal([]byte(qsstr), &qs); err != nil {
-		qs.QueryString = typeof
+		qs.QueryString = csite + "," + typeof
 	} else {
-		qs.QueryString = typeof + "," + qs.QueryString
+		qs.QueryString = csite + "," + typeof + "," + qs.QueryString
 	}
 	turl := c.getUrl(tplName)
 	var count int64
 	count = 0
-	list, count, _ := GetAllGgcmsArticle("Id,Title,Categoryid,Dateandtime", "id", "desc", qs.QueryString, int64(pagenum), adminpagesize, true)
+	list, count, _ := GetAllGgcmsArticle("Id,Title,Categoryid,Dateandtime,Siteid,AUrl", "Dateandtime", "desc", qs.QueryString, int64(pagenum), adminpagesize, true)
 	pages := models.GgcmsPagination{PageNum: pagenum, PageSize: int(adminpagesize), RowTotal: count, UrlTemplate: turl, NavigatePages: int(navigatepages)}
 	pages.CalcPages()
 	c.Data["pages"] = pages
@@ -163,11 +172,13 @@ func (c *AdminPagesController) AdminArticleAdd() {
 	if v, err := c.GetInt("id"); err == nil {
 		id = v
 	}
+	c.Data["alltopic"], _, _ = GetAllGgcmsTopic("Id,Topic", "id", "desc", "siteid:"+strconv.Itoa(c.currentSite), 0, 0, false)
 	c.Data["list"] = c.cacheman.CacheCategoryList(c.currentSite)
 	c.Data["style"], _ = styleAndTemplate()
 	var strarr []string
 	attaQuery, _ := getQueryList("articleid:" + strconv.Itoa(id))
 	c.Data["attachs"], _, _ = models.GetAllGgcmsArticleAttr(attaQuery, strarr, strarr, strarr, 0, 0, false)
+	var topicids []int
 	if info, err := GetOneGgcmsArticle(id); err != nil {
 		c.Data["info"] = models.GgcmsArticle{}
 		c.Data["pagecount"] = 1
@@ -178,7 +189,10 @@ func (c *AdminPagesController) AdminArticleAdd() {
 		pc, _ := models.GetCountGgcmsArticlePages(pageCountQuery)
 		c.Data["pagecount"] = pc + 1
 		c.Data["minfo"] = GetModulesInfo(info.Mid, info.Id)
+		topicdal := models.GgcmsTopic{}
+		topicids, _ = topicdal.TopicsById(id)
 	}
+	c.Data["topic"] = topicids
 	c.TplName = "admin/" + tplName
 }
 
@@ -331,6 +345,135 @@ func (c *AdminPagesController) AdminUserLevelAdd() {
 	c.TplName = "admin/" + tplName
 }
 
+//管理员分组
+// @router /admingroup.html [get]
+func (c *AdminPagesController) AdminGroup() {
+	var tplName = "admingroup.html"
+	pagenum := 1
+	if v, err := c.GetInt("pagenum"); err == nil {
+		pagenum = v
+	}
+	turl := c.getUrl(tplName)
+	strquery := "egroup:admingroup,issystem:1"
+	var count int64
+	count = 0
+	list, count, _ := GetAllGgcmsSysEnum("", "", "", strquery, int64(pagenum), adminpagesize, true)
+	pages := models.GgcmsPagination{PageNum: pagenum, PageSize: int(adminpagesize), RowTotal: count, UrlTemplate: turl, NavigatePages: int(navigatepages)}
+	pages.CalcPages()
+	c.Data["pages"] = pages
+	c.Data["list"] = list
+	c.TplName = "admin/" + tplName
+}
+
+//管理员分组设置
+// @router /admingroupadd.html [get]
+func (c *AdminPagesController) AdminGroupAdd() {
+	var tplName = "admingroupadd.html"
+	id := 0
+	if v, err := c.GetInt("id"); err == nil {
+		id = v
+	}
+	if info, err := GetOneGgcmsSysEnum(id); err != nil {
+		c.Data["info"] = models.GgcmsSysEnum{Egroup: "admingroup", Issystem: 1}
+	} else {
+		c.Data["info"] = info
+	}
+	//	strquery := "egroup:admingroup"
+	c.TplName = "admin/" + tplName
+}
+
+//管理员管理
+// @router /adminlist.html [get]
+func (c *AdminPagesController) AdminList() {
+	var tplName = "adminlist.html"
+	pagenum := 1
+	if v, err := c.GetInt("pagenum"); err == nil {
+		pagenum = v
+	}
+	turl := c.getUrl(tplName)
+	var count int64
+	count = 0
+	list, count, _ := GetAllGgcmsAdmin("", "", "", "", int64(pagenum), adminpagesize, true)
+	pages := models.GgcmsPagination{PageNum: pagenum, PageSize: int(adminpagesize), RowTotal: count, UrlTemplate: turl, NavigatePages: int(navigatepages)}
+	pages.CalcPages()
+	admingroup, _, _ := GetAllGgcmsSysEnum("Id,Ename,Evalue", "", "", "egroup:admingroup", 0, 0, false)
+	uid, ok := c.Ctx.Input.Session("uid").(int)
+	if !ok {
+		uid = 0
+	}
+	c.Data["userid"] = uid
+	c.Data["pages"] = pages
+	c.Data["admingroup"] = admingroup
+	c.Data["list"] = list
+	c.TplName = "admin/" + tplName
+}
+
+//管理员设置
+// @router /adminadd.html [get]
+func (c *AdminPagesController) AdminAdd() {
+	var tplName = "adminadd.html"
+	id := 0
+	if v, err := c.GetInt("id"); err == nil {
+		id = v
+	}
+	admingroup, _, _ := GetAllGgcmsSysEnum("Id,Ename,Evalue", "Orderid", "asc", "egroup:admingroup", 0, 0, false)
+	c.Data["admingroup"] = admingroup
+
+	if info, err := GetOneGgcmsAdmin(id); err != nil {
+		c.Data["info"] = models.GgcmsAdmin{}
+	} else {
+		info.Pwd = ""
+		c.Data["info"] = info
+	}
+	c.TplName = "admin/" + tplName
+}
+
+//专题管理
+// @router /topiclist.html [get]
+func (c *AdminPagesController) AdminTopicList() {
+	var tplName = "topiclist.html"
+	pagenum := 1
+	if v, err := c.GetInt("pagenum"); err == nil {
+		pagenum = v
+	}
+	turl := c.getUrl(tplName)
+	var count int64
+	count = 0
+	list, count, _ := GetAllGgcmsTopic("Id,Topic,Groupkey", "id", "desc", "siteid:"+strconv.Itoa(c.currentSite), int64(pagenum), adminpagesize, true)
+	pages := models.GgcmsPagination{PageNum: pagenum, PageSize: int(adminpagesize), RowTotal: count, UrlTemplate: turl, NavigatePages: int(navigatepages)}
+	pages.CalcPages()
+	topic := models.GgcmsTopic{}
+	groups, _ := topic.GetGroups()
+	c.Data["pages"] = pages
+	c.Data["groups"] = groups
+	c.Data["list"] = list
+	c.TplName = "admin/" + tplName
+}
+
+//专题设置
+// @router /topicadd.html [get]
+func (c *AdminPagesController) AdminTopicAdd() {
+	var tplName = "topicadd.html"
+	id := 0
+	if v, err := c.GetInt("id"); err == nil {
+		id = v
+	}
+	topic := models.GgcmsTopic{}
+	groups, _ := topic.GetGroups()
+	c.Data["groups"] = groups
+	c.Data["style"], _ = styleAndTemplate()
+
+	if info, err := GetOneGgcmsTopic(id); err != nil {
+		topic := models.GgcmsTopic{
+			Pagesize: int(adminpagesize),
+		}
+		c.Data["info"] = topic
+	} else {
+		c.Data["info"] = info
+	}
+	c.TplName = "admin/" + tplName
+}
+
 //系统设置
 // @router /systemconfigs.html [get]
 func (c *AdminPagesController) AdminSystemConfigs() {
@@ -394,6 +537,15 @@ func (c *AdminPagesController) AdminDashboard() {
 // @router /ui_bootstrap.html [get]
 func (c *AdminPagesController) AdminBtp() {
 	c.TplName = "admin/ui_bootstrap.html"
+}
+
+// @router /login.html [get]
+func (c *AdminPagesController) Admin_Login() {
+	cfgs := make(map[string]string)
+	cfgs["cfg_prefixpath"] = beego.AppConfig.String("prefixpath")
+	c.Data["configs"] = cfgs
+
+	c.TplName = "admin/login.html"
 }
 
 //头尾模板

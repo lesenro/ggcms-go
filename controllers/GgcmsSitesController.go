@@ -197,7 +197,7 @@ func (c *GgcmsSitesController) UpdateConfig() {
 	id, _ := strconv.Atoi(idStr)
 	msg := models.Message{1, "失败", nil}
 	err := models.UpdateConfigGgcmsSites(id)
-	c.cacheman.ClearByKey(cnSiteConfig + strconv.Itoa(id))
+	c.cacheman.ClearByKey(cnSiteConfig + "_" + strconv.Itoa(id))
 	if err != nil {
 		msg.Data = err
 		c.Data["json"] = msg

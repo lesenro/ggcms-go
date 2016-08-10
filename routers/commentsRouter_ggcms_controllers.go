@@ -120,6 +120,48 @@ func init() {
 
 	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
 		beego.ControllerComments{
+			"AdminGroup",
+			`/admingroup.html`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
+		beego.ControllerComments{
+			"AdminGroupAdd",
+			`/admingroupadd.html`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
+		beego.ControllerComments{
+			"AdminList",
+			`/adminlist.html`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
+		beego.ControllerComments{
+			"AdminAdd",
+			`/adminadd.html`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
+		beego.ControllerComments{
+			"AdminTopicList",
+			`/topiclist.html`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
+		beego.ControllerComments{
+			"AdminTopicAdd",
+			`/topicadd.html`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
+		beego.ControllerComments{
 			"AdminSystemConfigs",
 			`/systemconfigs.html`,
 			[]string{"get"},
@@ -162,15 +204,15 @@ func init() {
 
 	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
 		beego.ControllerComments{
-			"Tpls",
-			`/tpl/:key`,
+			"Admin_Login",
+			`/login.html`,
 			[]string{"get"},
 			nil})
 
-	beego.GlobalControllerRouter["ggcms/controllers:CacheManage"] = append(beego.GlobalControllerRouter["ggcms/controllers:CacheManage"],
+	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
 		beego.ControllerComments{
-			"CacheClearAll",
-			`/`,
+			"Tpls",
+			`/tpl/:key`,
 			[]string{"get"},
 			nil})
 
@@ -193,6 +235,13 @@ func init() {
 			"GetOne",
 			`/:id`,
 			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminController"] = append(beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminController"],
+		beego.ControllerComments{
+			"GetOneByName",
+			`/login`,
+			[]string{"post"},
 			nil})
 
 	beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminController"] = append(beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminController"],
@@ -825,6 +874,13 @@ func init() {
 			[]string{"get"},
 			nil})
 
+	beego.GlobalControllerRouter["ggcms/controllers:ToolsController"] = append(beego.GlobalControllerRouter["ggcms/controllers:ToolsController"],
+		beego.ControllerComments{
+			"CacheClearAll",
+			`/clearcacth`,
+			[]string{"get"},
+			nil})
+
 	beego.GlobalControllerRouter["ggcms/controllers:WebPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:WebPagesController"],
 		beego.ControllerComments{
 			"WebIndex",
@@ -841,8 +897,22 @@ func init() {
 
 	beego.GlobalControllerRouter["ggcms/controllers:WebPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:WebPagesController"],
 		beego.ControllerComments{
+			"WebTopic",
+			`/topic/:id/?:page`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:WebPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:WebPagesController"],
+		beego.ControllerComments{
 			"WebArticle",
 			`/article/:id/?:page`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:WebPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:WebPagesController"],
+		beego.ControllerComments{
+			"GetCode",
+			`/getcode`,
 			[]string{"get"},
 			nil})
 

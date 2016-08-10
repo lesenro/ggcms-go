@@ -1133,6 +1133,15 @@ var App = function() {
             $("body").append(msghtml.join(""));
             //显示模态框
             $("#" + msgid).modal("show");
+            $("#" + msgid).on('shown.bs.modal', function(e) {
+                if ($("#" + msgid + " .modal-footer .btn-ok").length > 0) {
+                    $("#" + msgid + " .modal-footer .btn-ok").focus();
+                } else if ($("#" + msgid + " .modal-footer .btn-yes").length > 0) {
+                    $("#" + msgid + " .modal-footer .btn-yes").focus();
+                } else {
+                    $("#" + msgid + " .modal-footer .btn").first().focus();
+                }
+            });
             var result = "";
             //获取点击按钮
             $("#" + msgid + ' .modal-footer .btn').click(function() {

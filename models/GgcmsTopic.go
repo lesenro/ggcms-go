@@ -9,22 +9,24 @@ import (
 )
 
 type GgcmsTopic struct {
-	Id          int       `orm:"column(id);auto"`
-	Topic       string    `orm:"column(topic);size(255);null"`
-	Dateandtime time.Time `orm:"column(dateandtime);type(datetime);null"`
-	Articlenum  int       `orm:"column(articlenum);null"`
-	Categoryid  int       `orm:"column(categoryid);null"`
-	Content     string    `orm:"column(content);null"`
-	Pagesize    int       `orm:"column(pagesize);null"`
-	Tempname    string    `orm:"column(tempname);size(100)"`
-	Styledir    string    `orm:"column(styledir);size(100)"`
-	Subtopic    string    `orm:"column(subtopic);null"`
-	Title       string    `orm:"column(title);size(255);null"`
-	Description string    `orm:"column(Description);size(255);null"`
-	Keywords    string    `orm:"column(Keywords);size(255);null"`
-	Logo        string    `orm:"column(logo);size(255);null"`
-	Turl        string    `orm:"column(turl);size(255);null"`
-	Extattrib   string    `orm:"column(extattrib);size(255);null"`
+	Id           int       `orm:"column(id);auto"`
+	Topic        string    `orm:"column(topic);size(255);null"`
+	Dateandtime  time.Time `orm:"column(dateandtime);type(datetime);null"`
+	Articlenum   int       `orm:"column(articlenum);null"`
+	Categoryid   int       `orm:"column(categoryid);null"`
+	Content      string    `orm:"column(content);null"`
+	Pagesize     int       `orm:"column(pagesize);null"`
+	Tempname     string    `orm:"column(tempname);size(100)"`
+	Mob_tempname string    `orm:"column(mob_tempname);size(100)"`
+	Styledir     string    `orm:"column(styledir);size(100)"`
+	Groupkey     string    `orm:"column(groupkey);size(100)"`
+	Title        string    `orm:"column(title);size(255);null"`
+	Description  string    `orm:"column(Description);size(255);null"`
+	Keywords     string    `orm:"column(Keywords);size(255);null"`
+	Logo         string    `orm:"column(logo);size(255);null"`
+	Turl         string    `orm:"column(turl);size(255);null"`
+	Extattrib    string    `orm:"column(extattrib);size(255);null"`
+	Siteid       int       `orm:"column(siteid);null"`
 }
 
 func (t *GgcmsTopic) TableName() string {
@@ -35,25 +37,35 @@ func init() {
 	orm.RegisterModel(new(GgcmsTopic))
 }
 
+func (t *GgcmsTopic) GetGroups() (groups []string, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(GgcmsTopic))
+	var l []GgcmsTopic
+	_, err = qs.GroupBy("groupkey").All(&l, "groupkey")
+	for _, v := range l {
+		groups = append(groups, v.Groupkey)
+	}
+	return
+}
+
 // AddGgcmsTopic insert a new GgcmsTopic into database and returns
 // last inserted Id on success.
-func AddGgcmsTopic(m *GgcmsTopic) (id int64, err error) {
+func (this *GgcmsTopic) Add() (id int64, err error) {
 	o := orm.NewOrm()
-	id, err = o.Insert(m)
+	id, err = o.Insert(this)
 	return
 }
 
 // GetGgcmsTopicById retrieves GgcmsTopic by Id. Returns error if
 // Id doesn't exist
-func GetGgcmsTopicById(id int) (v *GgcmsTopic, err error) {
+func (this *GgcmsTopic) GetInfo() (err error) {
 	o := orm.NewOrm()
-	v = &GgcmsTopic{Id: id}
-	if err = o.Read(v); err == nil {
-		return v, nil
+	if err = o.Read(this); err == nil {
+		return nil
 	}
-	return nil, err
+	return err
 }
-func GetCountGgcmsTopic(query map[string]string) (count int64, err error) {
+func (this *GgcmsTopic) GetCount(query map[string]string) (count int64, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(GgcmsTopic))
 	var strs []string
@@ -62,7 +74,7 @@ func GetCountGgcmsTopic(query map[string]string) (count int64, err error) {
 	}
 	return qs.Count()
 }
-func ExistGgcmsTopic(query map[string]string) (exist bool) {
+func (this *GgcmsTopic) Exist(query map[string]string) (exist bool) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(GgcmsTopic))
 	var strs []string
@@ -75,7 +87,7 @@ func ExistGgcmsTopic(query map[string]string) (exist bool) {
 
 // GetAllGgcmsTopic retrieves all GgcmsTopic matches certain condition. Returns empty list if
 // no records exist
-func GetAllGgcmsTopic(query map[string]string, fields []string, sortby []string, order []string,
+func (this *GgcmsTopic) GetAll(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64, c bool) (ml []interface{}, count int64, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(GgcmsTopic))
@@ -111,34 +123,27 @@ func GetAllGgcmsTopic(query map[string]string, fields []string, sortby []string,
 
 // UpdateGgcmsTopic updates GgcmsTopic by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateGgcmsTopicById(m *GgcmsTopic) (err error) {
+func (this *GgcmsTopic) Update() (err error) {
 	o := orm.NewOrm()
-	v := GgcmsTopic{Id: m.Id}
-	// ascertain id exists in the database
-	if err = o.Read(&v); err == nil {
-		var num int64
-		if num, err = o.Update(m); err == nil {
-			fmt.Println("Number of records updated in database:", num)
-		}
+	var num int64
+	if num, err = o.Update(this); err == nil {
+		fmt.Println("Number of records updated in database:", num)
 	}
 	return
 }
 
 // DeleteGgcmsTopic deletes GgcmsTopic by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteGgcmsTopic(id int) (err error) {
+func (this *GgcmsTopic) Delete(id int) (err error) {
 	o := orm.NewOrm()
-	v := GgcmsTopic{Id: id}
-	// ascertain id exists in the database
-	if err = o.Read(&v); err == nil {
-		var num int64
-		if num, err = o.Delete(&GgcmsTopic{Id: id}); err == nil {
-			fmt.Println("Number of records deleted in database:", num)
-		}
+	var num int64
+	if num, err = o.Delete(&this); err == nil {
+		fmt.Println("Number of records deleted in database:", num)
 	}
 	return
 }
-func MultDeleteGgcmsTopic(query map[string]string, ids []int) (num int64, err error) {
+
+func (this *GgcmsTopic) MultDelete(query map[string]string, ids []int) (num int64, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(GgcmsTopic))
 	var strs []string
@@ -149,4 +154,14 @@ func MultDeleteGgcmsTopic(query map[string]string, ids []int) (num int64, err er
 		qs = qs.Filter("id__in", ids)
 	}
 	return qs.Delete()
+}
+
+//文章id查找专题
+func (this *GgcmsTopic) TopicsById(aid int) (tids []int, err error) {
+	o := orm.NewOrm()
+	num, err := o.Raw("SELECT tid from `ggcms_article_topic` WHERE aid = ?", aid).QueryRows(&tids)
+	if err == nil {
+		fmt.Println("tids nums: ", num)
+	}
+	return
 }

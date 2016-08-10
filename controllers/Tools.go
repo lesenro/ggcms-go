@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"archive/zip"
+	"bytes"
+	"compress/gzip"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -194,6 +196,14 @@ func ReadFileBytes(path string) []byte {
 func ReadFileString(path string) string {
 	return string(ReadFileBytes(path))
 }
+func GzipBytes(bs []byte) []byte {
+	var b bytes.Buffer
+	w := gzip.NewWriter(&b)
+	defer w.Close()
+	w.Write(bs)
+	w.Flush()
+	return b.Bytes()
+}
 
 //获取指定目录下的所有文件和目录
 func DirList(dirPth string) (list []string, err error) {
@@ -234,6 +244,9 @@ func ToJsonFile(v interface{}, jfile string) error {
 }
 func StringToFile(content, file string) error {
 	var bytes = []byte(content)
+	return ioutil.WriteFile(file, bytes, 0666)
+}
+func BytesToFile(bytes []byte, file string) error {
 	return ioutil.WriteFile(file, bytes, 0666)
 }
 

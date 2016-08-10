@@ -182,9 +182,17 @@
             } else if (/^list_/.test(val)) {
                 return "列表"
             } else if (/^view_/.test(val)) {
-                return "内容"
+                return "文章"
             } else if (/^topic_/.test(val)) {
-                return "列表"
+                return "专题"
+            } else if (/^m_list_/.test(val)) {
+                return "移动列表"
+            } else if (/^m_index_/.test(val)) {
+                return "移动首页"
+            } else if (/^m_view/.test(val)) {
+                return "移动文章"
+            } else if (/^m_topic_/.test(val)) {
+                return "移动专题"
             } else {
                 return "其他"
             }

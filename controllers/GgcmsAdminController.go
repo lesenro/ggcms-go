@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"ggcms/models"
 	"strconv"
@@ -67,12 +69,19 @@ func (c *GgcmsAdminController) Edit() {
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		msg = c.validation(v)
 		if msg.Code == 0 {
-			query, _ := getQueryList("userid:" + v.Userid + ",id.nq:" + strconv.Itoa(v.Id))
+			query, _ := getQueryList("userid:" + v.Userid + ",id.ne:" + strconv.Itoa(v.Id))
 			exist := models.ExistGgcmsAdmin(query)
 			if exist {
 				msg.Code = 101
 				msg.Msg = "已存在，不能重复添加。"
 			} else {
+				if strings.TrimSpace(v.Pwd) != "" {
+					m := md5.New()
+					m.Write([]byte(v.Pwd))
+					v.Pwd = hex.EncodeToString(m.Sum(nil))
+				} else {
+					v.Pwd = ""
+				}
 				if err := models.UpdateGgcmsAdminById(&v); err == nil {
 					c.Ctx.Output.SetStatus(201)
 					msg = models.Message{0, "成功", v}
@@ -108,6 +117,46 @@ func (c *GgcmsAdminController) GetOne() {
 	} else {
 		c.Data["json"] = v
 	}
+	c.ServeJSON()
+}
+
+// @router /login [post]
+func (c *GgcmsAdminController) GetOneByName() {
+	msg := models.Message{1, "失败", nil}
+	//解析表单数据
+	var f interface{}
+	var err error
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &f)
+	if err != nil {
+		msg = models.Message{1, err.Error(), err}
+	} else {
+		postData := f.(map[string]interface{})
+		name := postData["username"].(string)
+		pass := postData["password"].(string)
+		code := strings.ToLower(postData["checkcode"].(string))
+		sesscode := c.GetSession("checkcode")
+		c.DelSession("checkcode")
+		if sesscode == nil || strings.ToLower(sesscode.(string)) != code {
+			msg = models.Message{1, "验证码错误，请检查:", nil}
+		} else {
+			var v *models.GgcmsAdmin
+			v, err = models.GetGgcmsAdminByName(name)
+			if err != nil {
+				msg = models.Message{1, "用户名或密码错误，请检查", err}
+			} else {
+				m := md5.New()
+				m.Write([]byte(v.Pwd + code))
+				md5pass := hex.EncodeToString(m.Sum(nil))
+				if pass != md5pass {
+					msg = models.Message{1, "用户名或密码错误，请检查", nil}
+				} else {
+					c.SetSession("uid", v.Id)
+					msg = models.Message{0, "成功", nil}
+				}
+			}
+		}
+	}
+	c.Data["json"] = msg
 	c.ServeJSON()
 }
 

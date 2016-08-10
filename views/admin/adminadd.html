@@ -7,7 +7,7 @@
                 <div class="caption font-green-sharp">
                     <i class="icon-settings font-green-sharp"></i>
                     <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
-                    <span class="caption-helper">系统设置</span>
+                    <span class="caption-helper" data-ng-bind="$state.current.data.pageTitle"></span>
                 </div>
                 <div class="tools">
                     <ul class="page-breadcrumb breadcrumb">
@@ -25,38 +25,40 @@
                         <form class="form-horizontal" name="ggcmsForm" role="form" novalidate>
                             <input type="hidden" value="[#.info.Id]" ng-model="data.Id">
                             <div class="form-body">
-                                <div class="form-group" ng-class="{'has-error' : ggcmsForm.Ename.$invalid&&!ggcmsForm.Ename.$pristine}">
-                                    <label class="col-md-3 control-label">键名</label>
+                                <div class="form-group" ng-class="{'has-error' : ggcmsForm.Userid.$invalid&&!ggcmsForm.Userid.$pristine}">
+                                    <label class="col-md-3 control-label">管理员帐号</label>
                                     <div class="col-md-9">
-                                        <input type="text" name="Ename" minlength="2" maxlength="30" class="form-control" placeholder="键名" ng-model="data.Ename" required>
-                                        <span class="help-block" ng-show="ggcmsForm.Ename.$invalid&&!ggcmsForm.Ename.$pristine"> 键名请输入2到30个的字符 </span>
+                                        <input type="text" name="Userid" ng-disabled="data.Id > 0" minlength="3" maxlength="30" class="form-control" placeholder="管理员帐号" ng-model="data.Userid" required>
+                                        <span class="help-block" ng-show="ggcmsForm.Userid.$invalid&&!ggcmsForm.Userid.$pristine"> 管理员帐号请输入3到30个的字符 </span>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label">键值</label>
-                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Evalue.$invalid&&!ggcmsForm.Evalue.$pristine}">
-                                        <input type="text" name="Evalue" maxlength="255" class="form-control" placeholder="键值" ng-model="data.Evalue" required>
-                                        <span class="help-block" ng-show="ggcmsForm.Evalue.$invalid&&!ggcmsForm.Evalue.$pristine"> 必须输入键值,且不得超出255个字符 </span>
+                                    <label class="col-md-3 control-label">密码</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Pwd.$invalid&&!ggcmsForm.Pwd.$pristine}">
+                                        [#if gt .info.Id 0]
+                                        <input type="password" name="Pwd" maxlength="255" class="form-control" placeholder="密码" ng-model="data.Pwd"> [#else]
+                                        <input type="password" name="Pwd" maxlength="255" class="form-control" placeholder="密码" ng-model="data.Pwd" required> [#end]
+                                        <span class="help-block" ng-show="ggcmsForm.Pwd.$invalid&&!ggcmsForm.Pwd.$pristine"> 必须输入密码,且不得超出255个字符 </span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-3 control-label">分组</label>
-                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Egroup.$invalid&&!ggcmsForm.Egroup.$pristine}">
-                                        <input type="text" typeahead="state for state in data.groups | filter:$viewValue | limitTo:8" id="Egroup" name="Egroup" minlength="2" maxlength="20" class="form-control" placeholder="分组名称" ng-model="data.Egroup">
-                                        <span class="help-block" ng-show="ggcmsForm.Egroup.$invalid&&!ggcmsForm.Egroup.$pristine"> 必须输入2到20个字符分组名称 </span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">所属键值</label>
-                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Pvalue.$invalid&&!ggcmsForm.Pvalue.$pristine}">
-                                        <input type="text" name="Pvalue" maxlength="255" class="form-control" placeholder="所属键值" ng-model="data.Pvalue">
-                                        <span class="help-block" ng-show="ggcmsForm.Pvalue.$invalid&&!ggcmsForm.Pvalue.$pristine"> 所属键值不得超出255个字符 </span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">排序</label>
                                     <div class="col-md-9">
-                                        <input type="number" name="Orderid" class="form-control" placeholder="排序:从小到大" ng-model="data.Orderid">
+                                        <select class="form-control input-inline" name="Usertype" id="Usertype" ng-model="data.Usertype" ng-options="kv.Evalue as kv.Ename for kv in data.groups">
+                                            <option value="" selected>---请选择---</option> 
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">邮箱</label>
+                                    <div class="col-md-9">
+                                        <input type="email" name="Email" class="form-control" placeholder="邮箱" ng-model="data.Email">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">名称</label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="Tname" class="form-control" placeholder="名称" ng-model="data.Tname">
                                     </div>
                                 </div>
                             </div>
@@ -82,10 +84,10 @@
 <script>
     var infoData = {
         data: [#.info],
-        postUrl: '/api/ggcms_sys_enum/',
-        msgTitle: "系统字典",
-        msgShowInput: "Ename"
+        postUrl: '/api/ggcms_admin/',
+        msgTitle: "管理员信息",
+        msgShowInput: "Userid"
     };
-    infoData.data.groups = [#.groups];
+    infoData.data.groups = [#.admingroup];
 </script>
 <!-- END MAIN JS -->

@@ -5,38 +5,39 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
 
 type GgcmsCategory struct {
-	Id           int       `orm:"column(id);auto"`
-	Categoryname string    `orm:"column(categoryname);size(255);null"`
-	Orderid      int       `orm:"column(orderid);null"`
-	Articlenum   int       `orm:"column(articlenum);null"`
-	Imgartnum    int       `orm:"column(imgartnum);null"`
-	Logo         string    `orm:"column(logo);size(255);null"`
-	Styledir     string    `orm:"column(styledir);size(100)"`
-	Lastupdate   time.Time `orm:"column(lastupdate);type(datetime);null"`
-	Pid          int       `orm:"column(pid);null"`
-	Ppath        string    `orm:"column(ppath);size(255);null"`
-	Depth        int       `orm:"column(depth);null"`
-	Child        int       `orm:"column(child);null"`
-	Ctempname    string    `orm:"column(ctempname);size(100)"`
-	Atempname    string    `orm:"column(atempname);size(100)"`
-	Curl         string    `orm:"column(curl);size(255);null"`
-	Pagesize     int       `orm:"column(pagesize);null"`
-	NavPages     int       `orm:"column(navpages);null"`
-	Imgwidth     int       `orm:"column(imgwidth);null"`
-	Imgheight    int       `orm:"column(imgheight);null"`
-	Rssfeed      string    `orm:"column(rssfeed);size(255);null"`
-	Keywords     string    `orm:"column(Keywords);size(255);null"`
-	Description  string    `orm:"column(description);size(255);null"`
-	Content      string    `orm:"column(content);null"`
-	Extattrib    string    `orm:"column(extattrib);size(255);null"`
-	Siteid       int       `orm:"column(siteid);null"`
-	Ctype        int8      `orm:"column(ctype);null"`
-	Mid          int       `orm:"column(mid);null"`
+	Id            int       `orm:"column(id);auto"`
+	Categoryname  string    `orm:"column(categoryname);size(255);null"`
+	Orderid       int       `orm:"column(orderid);null"`
+	Articlenum    int       `orm:"column(articlenum);null"`
+	Imgartnum     int       `orm:"column(imgartnum);null"`
+	Logo          string    `orm:"column(logo);size(255);null"`
+	Styledir      string    `orm:"column(styledir);size(100)"`
+	Lastupdate    time.Time `orm:"column(lastupdate);type(datetime);null"`
+	Pid           int       `orm:"column(pid);null"`
+	Ppath         string    `orm:"column(ppath);size(255);null"`
+	Depth         int       `orm:"column(depth);null"`
+	Child         int       `orm:"column(child);null"`
+	Ctempname     string    `orm:"column(ctempname);size(100)"`
+	Atempname     string    `orm:"column(atempname);size(100)"`
+	Mob_list_temp string    `orm:"column(mob_list_temp);size(100)"`
+	Mob_view_temp string    `orm:"column(mob_view_temp);size(100)"`
+	Curl          string    `orm:"column(curl);size(255);null"`
+	Pagesize      int       `orm:"column(pagesize);null"`
+	NavPages      int       `orm:"column(navpages);null"`
+	Imgwidth      int       `orm:"column(imgwidth);null"`
+	Imgheight     int       `orm:"column(imgheight);null"`
+	Rssfeed       string    `orm:"column(rssfeed);size(255);null"`
+	Keywords      string    `orm:"column(Keywords);size(255);null"`
+	Description   string    `orm:"column(description);size(255);null"`
+	Content       string    `orm:"column(content);null"`
+	Extattrib     string    `orm:"column(extattrib);size(255);null"`
+	Siteid        int       `orm:"column(siteid);null"`
+	Ctype         int8      `orm:"column(ctype);null"`
+	Mid           int       `orm:"column(mid);null"`
 }
 
 func (t *GgcmsCategory) TableName() string {
@@ -116,7 +117,6 @@ func GetAllGgcmsCategory(query map[string]string, fields []string, sortby []stri
 		if c {
 			count, _ = qs.Count()
 		}
-		beego.Alert(ml)
 		return ml, count, nil
 	}
 	return nil, 0, err

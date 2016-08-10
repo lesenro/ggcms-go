@@ -7,7 +7,7 @@
                 <div class="caption font-green-sharp">
                     <i class="icon-settings font-green-sharp"></i>
                     <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
-                    <span class="caption-helper">系统设置</span>
+                    <span class="caption-helper" data-ng-bind="$state.current.data.pageTitle"></span>
                 </div>
                 <div class="tools">
                     <ul class="page-breadcrumb breadcrumb">
@@ -25,25 +25,24 @@
                         <form class="form-horizontal" name="ggcmsForm" role="form" novalidate>
                             <input type="hidden" value="[#.info.Id]" ng-model="data.Id">
                             <div class="form-body">
-                                <div class="form-group" ng-class="{'has-error' : ggcmsForm.Site_name.$invalid&&!ggcmsForm.Site_name.$pristine}">
-                                    <label class="col-md-3 control-label">站点名称</label>
+                                <div class="form-group" ng-class="{'has-error' : ggcmsForm.Ename.$invalid&&!ggcmsForm.Ename.$pristine}">
+                                    <label class="col-md-3 control-label">分组名称</label>
                                     <div class="col-md-9">
-                                        <input type="text" name="Site_name" minlength="2" maxlength="30" class="form-control" placeholder="站点名称" required ng-model="data.Site_name">
-                                        <span class="help-block" ng-show="ggcmsForm.Site_name.$invalid&&!ggcmsForm.Site_name.$pristine"> 站点名称请输入2到30个的字符 </span>
+                                        <input type="text" name="Ename" minlength="2" maxlength="30" class="form-control" placeholder="分组名称" ng-model="data.Ename" required>
+                                        <span class="help-block" ng-show="ggcmsForm.Ename.$invalid&&!ggcmsForm.Ename.$pristine"> 分组名称请输入2到30个的字符 </span>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label">域名</label>
-                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Site_domain.$invalid&&!ggcmsForm.Site_domain.$pristine}">
-                                        <input type="text" name="Site_domain" maxlength="255" class="form-control" placeholder="域名" required ng-model="data.Site_domain" ng-pattern="/^[0-9a-zA-Z]+[0-9a-zA-Z\.-]*\.[a-zA-Z]{2,4}$/">
-                                        <span class="help-block" ng-show="ggcmsForm.Site_domain.$invalid&&!ggcmsForm.Site_domain.$pristine"> 请输入正确的域名，如:www.ggcms.com </span>
+                                    <label class="col-md-3 control-label">分组标识</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Evalue.$invalid&&!ggcmsForm.Evalue.$pristine}">
+                                        <input type="text" name="Evalue" maxlength="20" class="form-control" placeholder="分组标识" ng-model="data.Evalue" required>
+                                        <span class="help-block" ng-show="ggcmsForm.Evalue.$invalid&&!ggcmsForm.Evalue.$pristine"> 必须输入分组标识,且不得超出20个字符 </span>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label">站点描述</label>
-                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Site_descrip.$invalid&&!ggcmsForm.Site_descrip.$pristine}">
-                                        <input type="text" name="Site_descrip" maxlength="255" class="form-control" placeholder="站点描述" ng-model="data.Site_descrip">
-                                        <span class="help-block" ng-show="ggcmsForm.Site_descrip.$invalid&&!ggcmsForm.Site_descrip.$pristine"> 描述不能超过255个字 </span>
+                                    <label class="col-md-3 control-label">排序</label>
+                                    <div class="col-md-9">
+                                        <input type="number" name="Orderid" class="form-control" placeholder="排序:从小到大" ng-model="data.Orderid">
                                     </div>
                                 </div>
                             </div>
@@ -69,9 +68,9 @@
 <script>
     var infoData = {
         data: [#.info],
-        postUrl: '/api/ggcms_sites/',
-        msgTitle: "站点",
-        msgShowInput: "Site_name"
+        postUrl: '/api/ggcms_sys_enum/',
+        msgTitle: "管理员分组信息",
+        msgShowInput: "Ename"
     };
 </script>
 <!-- END MAIN JS -->

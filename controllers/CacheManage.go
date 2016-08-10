@@ -10,33 +10,27 @@ import (
 
 const (
 	cnSystemConfig = "SystemConfig"
-	cnSiteConfig   = "SiteConfig_"
+	cnSiteConfig   = "SiteConfig"
 	cnCategoryList = "CategoryList"
+	cnSiteList     = "SiteList"
 )
 
 // oprations for CacheManage
 type CacheManage struct {
-	beego.Controller
 	cacheTimeOut time.Duration
 }
 
-// @Title Get
-// @Description get ClearAll
-// @Success 200
-// @Failure 403
-// @router / [get]
-func (c *CacheManage) CacheClearAll() {
-	msg := models.Message{0, "成功", nil}
-	if err := ggcacth.ClearAll(); err != nil {
-		msg = models.Message{1, err.Error(), err}
-	}
-	c.Data["json"] = msg
-	c.ServeJSON()
+//初始化CacheManage管理器
+func NewCacheManage() *CacheManage {
+	cm := &CacheManage{}
+	cm.Init()
+	return cm
 }
 func (c *CacheManage) ClearByKey(key string) {
 	ggcacth.Delete(key)
 }
-func (this *CacheManage) Prepare() {
+
+func (this *CacheManage) Init() {
 	var err error
 	//cache超时时间为20分钟
 	var ctimeout int64
@@ -49,6 +43,7 @@ func (this *CacheManage) Prepare() {
 
 func (c *CacheManage) CacheSystemConfigs() map[string]models.GgcmsSystemConfigs {
 	cacheName := cnSystemConfig
+nilerr:
 	if !ggcacth.IsExist(cacheName) {
 		ml := models.GetSystemConfigsBySiteId(0)
 		cfgs := make(map[string]models.GgcmsSystemConfigs)
@@ -60,10 +55,16 @@ func (c *CacheManage) CacheSystemConfigs() map[string]models.GgcmsSystemConfigs 
 		ggcacth.Put(cacheName, cfgs, c.cacheTimeOut)
 	}
 	imap := ggcacth.Get(cacheName)
+	if imap == nil {
+		c.ClearByKey(cacheName)
+		goto nilerr
+	}
+
 	return imap.(map[string]models.GgcmsSystemConfigs)
 }
 func (c *CacheManage) CacheSiteConfigs(siteid int) map[string]models.GgcmsSystemConfigs {
-	cacheName := cnSiteConfig + strconv.Itoa(siteid)
+	cacheName := cnSiteConfig + "_" + strconv.Itoa(siteid)
+nilerr:
 	if !ggcacth.IsExist(cacheName) {
 		ml := models.GetSystemConfigsBySiteId(siteid)
 		cfgs := make(map[string]models.GgcmsSystemConfigs)
@@ -75,14 +76,38 @@ func (c *CacheManage) CacheSiteConfigs(siteid int) map[string]models.GgcmsSystem
 		ggcacth.Put(cacheName, cfgs, c.cacheTimeOut)
 	}
 	imap := ggcacth.Get(cacheName)
+	if imap == nil {
+		c.ClearByKey(cacheName)
+		goto nilerr
+	}
 	return imap.(map[string]models.GgcmsSystemConfigs)
 }
 func (c *CacheManage) CacheCategoryList(siteid int) []interface{} {
-	cacheName := cnCategoryList
+	cacheName := cnCategoryList + "_" + strconv.Itoa(siteid)
+nilerr:
 	if !ggcacth.IsExist(cacheName) {
-		ml, _, _ := GetAllGgcmsCategory("Id,Categoryname,Pid,Styledir,Ctempname,Atempname,Mid", "orderid", "asc", "ctype:1,siteid:"+strconv.Itoa(siteid), 0, 0, false)
+		ml, _, _ := GetAllGgcmsCategory("Id,Categoryname,Pid,Styledir,Ctempname,Atempname,Mob_list_temp,Mob_view_temp,Mid,Curl", "orderid", "asc", "ctype:1,siteid:"+strconv.Itoa(siteid), 0, 0, false)
 		ggcacth.Put(cacheName, ml, c.cacheTimeOut)
 	}
 	imap := ggcacth.Get(cacheName)
+	if imap == nil {
+		c.ClearByKey(cacheName)
+		goto nilerr
+	}
+	return imap.([]interface{})
+}
+func (c *CacheManage) CacheSiteList() []interface{} {
+	cacheName := cnSiteList
+nilerr:
+	if !ggcacth.IsExist(cacheName) {
+		ml, _, _ := GetAllGgcmsSites("", "", "", "", 0, 0, false)
+		ggcacth.Put(cacheName, ml, c.cacheTimeOut)
+		beego.Debug(c.cacheTimeOut)
+	}
+	imap := ggcacth.Get(cacheName)
+	if imap == nil {
+		c.ClearByKey(cacheName)
+		goto nilerr
+	}
 	return imap.([]interface{})
 }

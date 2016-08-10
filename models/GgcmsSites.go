@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 
@@ -40,6 +41,22 @@ func GetGgcmsSitesById(id int) (v *GgcmsSites, err error) {
 		return v, nil
 	}
 	return nil, err
+}
+
+// GetGgcmsSitesById retrieves GgcmsSites by Id. Returns error if
+// Id doesn't exist
+func GetGgcmsSitesByDomain(dm string) (v *GgcmsSites, err error) {
+	o := orm.NewOrm()
+
+	var l []GgcmsSites
+	_, err = o.Raw("SELECT * FROM `ggcms_sites` WHERE site_domain = ? OR site_main = 1 ORDER BY site_main", dm).QueryRows(&l)
+	if err != nil {
+		return nil, err
+	}
+	if len(l) == 0 {
+		return nil, errors.New("not found")
+	}
+	return &l[0], nil
 }
 func GetCountGgcmsSites(query map[string]string) (count int64, err error) {
 	o := orm.NewOrm()

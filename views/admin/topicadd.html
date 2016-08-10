@@ -1,0 +1,178 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="DataEditUploadCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper" data-ng-bind="$state.current.data.pageTitle"></span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">管理首页</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body" ng-controller="TopicCtrl">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" name="ggcmsForm" role="form" novalidate>
+                            <input type="hidden" value="[#.info.Id]" ng-model="data.Id">
+                            <div class="form-body">
+                                <div class="form-group" ng-class="{'has-error' : ggcmsForm.Topic.$invalid&&!ggcmsForm.Topic.$pristine}">
+                                    <label class="col-md-3 control-label">专题名称</label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="Topic" maxlength="255" class="form-control" placeholder="专题名称" ng-model="data.Topic" required>
+                                        <span class="help-block" ng-show="ggcmsForm.Topic.$invalid&&!ggcmsForm.Topic.$pristine"> 必须输入专题名称，并不能超过255个的字符 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">跳转URL</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Turl.$invalid&&!ggcmsForm.Turl.$pristine}">
+                                        <input type="text" name="Turl" maxlength="255" class="form-control" placeholder="跳转URL" ng-model="data.Turl">
+                                        <span class="help-block"> 设置后将忽略其他设置，直接跳转 </span>
+                                        <span class="help-block" ng-show="ggcmsForm.Turl.$invalid&&!ggcmsForm.Turl.$pristine"> 跳转URL不得超出255个字符 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">专题Logo</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.btn_Logo.$invalid&&!ggcmsForm.btn_Logo.$pristine}">
+                                        <div class="input-inline input-xlarge">
+                                            <div class="input-group input-icon">
+                                                <i class="icon-picture" ng-if="data.Logo!=''" ng-click="preview('Logo')"></i>
+                                                <div type="text" class="form-control"> {{data.Logo}} </div>
+                                                <span class="input-group-btn">
+                                                <button class="btn blue fileupload" ngf-max-size="'200kb'" ngf-accept="'image/*'" ngf-pattern="'image/*'" ngf-select="upload($file,'Logo',true)" type="button" id="btn_Logo" name="btn_Logo" ng-model="btn_Logo" >选择图片</button>
+                                                <button class="btn red" id="Logo_Clear" name="Logo_Clear" ng-if="data.Logo!=''" ng-click="fileclear('Logo')">清除</button>
+                                                </span>
+                                            </div>
+                                            <span class="help-block" ng-show="ggcmsForm.btn_Logo.$invalid&&!ggcmsForm.btn_Logo.$pristine"> 必须上传图片,且大小不能超过200kb</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">分组</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Groupkey.$invalid&&!ggcmsForm.Groupkey.$pristine}">
+                                        <input type="text" typeahead="state for state in data.groups | filter:$viewValue | limitTo:8" id="Groupkey" name="Groupkey" minlength="2" maxlength="20" class="form-control" placeholder="分组名称" ng-model="data.Groupkey">
+                                        <span class="help-block" ng-show="ggcmsForm.Groupkey.$invalid&&!ggcmsForm.Groupkey.$pristine"> 必须输入2到20个字符分组名称 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">每页显示文章数</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Pagesize.$invalid&&!ggcmsForm.Pagesize.$pristine}">
+                                        <input type="number" name="Pagesize" min="1" max="100" class="form-control" placeholder="每页显示文章数" ng-model="data.Pagesize" required>
+                                        <span class="help-block" ng-show="ggcmsForm.Pagesize.$invalid&&!ggcmsForm.Pagesize.$pristine"> 每页显示文章数必须大于0，小于100 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">栏目详情</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Content.$invalid&&!ggcmsForm.Content.$pristine}">
+                                        <summernote config="editoptions" id="Content" name="Content" class="form-control" placeholder="栏目详情" ng-model="data.Content" on-image-upload="imageUpload(files,'Content')"></summernote>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">风格</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Styledir.$invalid&&!ggcmsForm.Styledir.$pristine}">
+                                        <select class="form-control input-inline" name="Styledir" id="Styledir" ng-change="styleChange(data.Styledir)" ng-model="data.Styledir" ng-options="kv.Style_folder as kv.Style_name for kv in style.style">
+                                                    <option value="" selected>---请选择---</option> 
+                                                </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">专题模板</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Tempname.$invalid&&!ggcmsForm.Tempname.$pristine}">
+                                        <select class="form-control input-inline" name="Tempname" id="Tempname" ng-model="data.Tempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'^topic'}:templateFilter">
+                                            <option value="" selected>---请选择---</option> 
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">移动端专题模板</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Mob_tempname.$invalid&&!ggcmsForm.Mob_tempname.$pristine}">
+                                        <select class="form-control input-inline" name="Mob_tempname" id="Mob_tempname" ng-model="data.Mob_tempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'^m_topic'}:templateFilter">
+                                            <option value="" selected>---请选择---</option> 
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">页面Keywords</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Keywords.$invalid&&!ggcmsForm.Keywords.$pristine}">
+                                        <input type="text" name="Keywords" ng-maxlength="255" class="form-control" placeholder="页面Keywords" ng-model="data.Keywords">
+                                        <span class="help-block" ng-show="ggcmsForm.Keywords.$invalid&&!ggcmsForm.Keywords.$pristine"> 最多不能超过255个字符 </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">页面Description</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Description.$invalid&&!ggcmsForm.Description.$pristine}">
+                                        <input type="text" name="Description" ng-maxlength="255" class="form-control" placeholder="页面Description" ng-model="data.Description">
+                                        <span class="help-block" ng-show="ggcmsForm.Description.$invalid&&!ggcmsForm.Description.$pristine"> 最多不能超过255个字符 </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">自定义属性</label>
+                                    <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Extattrib.$invalid&&!ggcmsForm.Extattrib.$pristine}">
+                                        <input type="text" name="Extattrib" ng-maxlength="255" class="form-control" placeholder="自定义属性" ng-model="data.Extattrib">
+                                        <span class="help-block"> 用户自定义属性，用于前台显示的个性化需求 </span>
+                                        <span class="help-block" ng-show="ggcmsForm.Extattrib.$invalid&&!ggcmsForm.Extattrib.$pristine"> 最多不能超过255个字符 </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button class="btn green" ng-click="update(data)" ng-disabled="ggcmsForm.$invalid"> <span class="fa fa-save"></span> 保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS -->
+<script>
+    var infoData = {
+        data: [#.info],
+        postUrl: '/api/ggcms_topic/',
+        msgTitle: "管理员信息",
+        msgShowInput: "Topic"
+    };
+    infoData.data.groups = [#.groups];
+    angular.module('GgcmsApp', ['summernote']);
+
+    function TopicCtrl($scope, $timeout) {
+        $scope.editoptions = {
+            height: 200,
+            lang: "zh-CN",
+        };
+        $scope.style = [#.style];
+        //风格修改
+        $scope.styleChange = function(dir) {
+            $scope.style.template = $scope.style["t_" + dir];
+        };
+        //模板过滤
+        $scope.templateFilter = function(name, val) {
+            var reg = eval("/" + val + "_/i");
+            return reg.test(name);
+        };
+        $scope.styleChange($scope.data.Styledir);
+
+    }
+</script>
+<!-- END MAIN JS -->

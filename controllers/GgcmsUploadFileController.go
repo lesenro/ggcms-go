@@ -5,6 +5,7 @@ import (
 	"ggcms/models"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"qiniupkg.com/api.v7/kodocli"
 
 	"github.com/astaxie/beego"
+	"github.com/disintegration/imaging"
 )
 
 // oprations for GgcmsAdmin
@@ -63,6 +65,11 @@ func (this *GgcmsUploadFileController) SaveFile(up models.UpInfo) string {
 	return this.saveFileLocal(sfn, up.Name)
 }
 
+//七牛缩略图，不做持久化
+func (this *GgcmsUploadFileController) thumbQiNiu(pic string, width, height int) string {
+	return pic + "?imageView2/1/w/" + strconv.Itoa(width) + "/h/" + strconv.Itoa(height)
+}
+
 //保存到七牛
 func (this *GgcmsUploadFileController) saveToQiNiu(sfn, tfn string) string {
 
@@ -102,10 +109,36 @@ func (this *GgcmsUploadFileController) saveToQiNiu(sfn, tfn string) string {
 	//打印出错信息
 	if err != nil {
 		fmt.Println("io.Put failed:", err)
-		return ""
+		//出错，保存本地
+		return this.saveFileLocal(sfn, tfn)
 	}
 	os.Remove(sfn)
 	return strings.Replace(link, "{fn}", ret.Key, -1)
+}
+
+//本地图片缩略图
+func (this *GgcmsUploadFileController) thumbLocal(pic string, width, height int) string {
+	img, err := imaging.Open(pic)
+	if err != nil {
+		return pic
+	}
+	thumb := imaging.Fill(img, width, height, imaging.Center, imaging.Lanczos)
+	date := time.Now().Format("20060102")
+	p := this.uploaddir + "/" + date
+	//建文件夹
+	if !Exist(p) {
+		os.MkdirAll(p, os.ModePerm)
+	}
+	fi, _ := os.Stat(pic)
+	tfn := fi.Name()
+	tfn = p + "/thumb_" + tfn
+	ext := path.Ext(pic)
+	for Exist(tfn) {
+		fn := RandString()
+		tfn = p + "/" + fn + ext
+	}
+	imaging.Save(thumb, tfn)
+	return tfn
 }
 
 //保存到本地
@@ -166,6 +199,15 @@ func (this *GgcmsUploadFileController) UploadFile() {
 		this.Data["json"] = msg
 	}
 	this.ServeJSON()
+}
+
+func (this *GgcmsUploadFileController) ImageThumb(pic string, width, height int) string {
+	val := this.GetSiteConfigVal("cfg_uploadmode")
+	switch val {
+	case "1": //七牛
+		return this.thumbQiNiu(pic, width, height)
+	}
+	return this.thumbLocal(pic, width, height)
 }
 func getUpInfo(inputid string, uplist models.UpInfos) *models.UpInfo {
 	for _, up := range uplist.UpinfoList {

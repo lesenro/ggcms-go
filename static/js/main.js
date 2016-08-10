@@ -115,7 +115,7 @@ GgcmsApp.controller('HeaderController', ['$scope', '$http', function($scope, $ht
             func: function(e) {
                 $http({
                         method: 'get',
-                        url: '/api/ggcms_cache',
+                        url: '/api/ggcms_tools/clearcacth',
                         params: {}, // pass in data as strings
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'

@@ -32,7 +32,6 @@ func (c *GgcmsCategoryController) Add() {
 		if msg.Code == 0 {
 			v.Lastupdate = time.Now()
 			v.Siteid = c.currentSite
-			v.Ctype = 1
 			//有上传的文件
 			var upinfos models.UpInfos
 			if err := json.Unmarshal(c.Ctx.Input.RequestBody, &upinfos); err == nil {
@@ -52,6 +51,9 @@ func (c *GgcmsCategoryController) Add() {
 				}
 			}
 			if _, err := models.AddGgcmsCategory(&v); err == nil {
+				sid := c.currentSite
+				c.cacheman.ClearByKey(cnCategoryList + "_" + strconv.Itoa(sid))
+
 				c.Ctx.Output.SetStatus(201)
 				msg = models.Message{0, "成功", v}
 				c.Data["json"] = msg
@@ -78,6 +80,9 @@ func (c *GgcmsCategoryController) SaveSort() {
 	msg := models.Message{1, "失败", nil}
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		if err = models.UpdateSortData(v); err == nil {
+			sid := c.currentSite
+			c.cacheman.ClearByKey(cnCategoryList + "_" + strconv.Itoa(sid))
+
 			msg = models.Message{0, "成功", nil}
 		} else {
 			msg.Msg = err.Error()
@@ -123,6 +128,9 @@ func (c *GgcmsCategoryController) Edit() {
 				}
 			}
 			if err := models.UpdateGgcmsCategoryById(&v); err == nil {
+				sid := c.currentSite
+				c.cacheman.ClearByKey(cnCategoryList + "_" + strconv.Itoa(sid))
+
 				c.Ctx.Output.SetStatus(201)
 				msg = models.Message{0, "成功", v}
 				c.Data["json"] = msg
@@ -213,6 +221,8 @@ func (c *GgcmsCategoryController) Delete() {
 		var num int64
 		queryList, _ := getQueryList("")
 		if num, err = models.MultDeleteGgcmsCategory(queryList, ids); err == nil {
+			sid := c.currentSite
+			c.cacheman.ClearByKey(cnCategoryList + "_" + strconv.Itoa(sid))
 			msg = models.Message{0, strconv.Itoa(int(num)), ids}
 		} else {
 			msg.Msg = err.Error()

@@ -6,196 +6,335 @@ GgcmsApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
     $stateProvider
     // Dashboard
         .state('home', {
-            url: "/home.html",
-            templateUrl: "home.html",
-            data: {
-                pageTitle: 'Admin Dashboard Template'
-            },
-            controller: "DashboardController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load({
-                        name: 'GgcmsApp',
-                        insertBefore: '#ng_load_plugins_before', // load the above css files before a LINK element with this ID. Dynamic CSS files must be loaded between core and theme css files
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/morris.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/morris.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/raphael-min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/jquery.sparkline.min.js',
+        url: "/home.html",
+        templateUrl: "home.html",
+        data: {
+            pageTitle: 'Admin Dashboard Template'
+        },
+        controller: "DashboardController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'GgcmsApp',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before a LINK element with this ID. Dynamic CSS files must be loaded between core and theme css files
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/morris.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/morris.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/raphael-min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/jquery.sparkline.min.js',
 
-                            ggcmsCfg.cfg_prefixpath + '/static/js/pages/dashboard.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/DashboardController.js',
-                        ]
-                    });
-                }]
-            }
-        })
-        // Dashboard
-        .state('dashboard', {
-            url: "/dashboard.html",
-            templateUrl: "dashboard.html",
-            data: {
-                pageTitle: 'Admin Dashboard Template'
-            },
-            controller: "DashboardController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load({
-                        name: 'GgcmsApp',
-                        insertBefore: '#ng_load_plugins_before', // load the above css files before a LINK element with this ID. Dynamic CSS files must be loaded between core and theme css files
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/morris.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/morris.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/raphael-min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/jquery.sparkline.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/pages/dashboard.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/DashboardController.js',
+                    ]
+                });
+            }]
+        }
+    })
 
-                            ggcmsCfg.cfg_prefixpath + '/static/js/pages/dashboard.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/DashboardController.js',
-                        ]
-                    });
-                }]
+    // Dashboard
+    .state('dashboard', {
+        url: "/dashboard.html",
+        templateUrl: "dashboard.html",
+        data: {
+            pageTitle: 'Admin Dashboard Template'
+        },
+        controller: "DashboardController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load({
+                    name: 'GgcmsApp',
+                    insertBefore: '#ng_load_plugins_before', // load the above css files before a LINK element with this ID. Dynamic CSS files must be loaded between core and theme css files
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/morris.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/morris.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/morris/raphael-min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/jquery.sparkline.min.js',
+
+                        ggcmsCfg.cfg_prefixpath + '/static/js/pages/dashboard.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/DashboardController.js',
+                    ]
+                });
+            }]
+        }
+    })
+
+    // sitesettingList
+    .state('sitesetting', {
+        url: "/sitesetting.html?pagenum",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            return 'sitesetting.html?pagenum=' + $routeParams.pagenum + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '站点设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // SystemConfigsAdd
+    .state('sitesettingadd', {
+        url: "/sitesettingadd.html?id",
+        templateUrl: function($routeParams) {
+            return 'sitesettingadd.html?id=' + $routeParams.id + '&rnd=' + Date.now();
+        },
+        data: {
+            pageTitle: '站点设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // SystemConfigs
+    .state('systemconfigs', {
+        url: "/systemconfigs.html",
+        templateUrl: function($routeParams) {
+            return 'systemconfigs.html?rnd=' + Date.now();
+        },
+        data: {
+            pageTitle: '系统设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/lang/summernote-zh-CN.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/angular-summernote.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/cfgctrl.js',
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // siteconfigs
+    .state('siteconfigs', {
+        url: "/siteconfigs.html",
+        templateUrl: function($routeParams) {
+            return 'siteconfigs.html?rnd=' + Date.now();
+        },
+        data: {
+            pageTitle: '网站设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/lang/summernote-zh-CN.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/angular-summernote.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/cfgctrl.js',
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // category
+    .state('category', {
+        url: "/category.html",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            return 'category.html?rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '栏目设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/jquery-nestable/jquery.nestable.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/jquery-nestable/jquery.nestable.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/angular-nestable.js',
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // categoryadd
+    .state('categoryadd', {
+        url: "/categoryadd.html?id",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            return 'categoryadd.html?id=' + $routeParams.id + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '栏目设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/lang/summernote-zh-CN.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/angular-summernote.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/angular.treeview-master/css/angular.treeview.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/angular.treeview-master/angular.treeview.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // articlelist
+    .state('articlelist', {
+        url: "/articlelist.html?type&pagenum&qs",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            var qs = "";
+            if ($routeParams.qs) {
+                qs = '&qs=' + $routeParams.qs;
             }
-        })
-        // sitesettingList
-        .state('sitesetting', {
-            url: "/sitesetting.html?pagenum",
-            templateUrl: function($routeParams) {
-                var rnd = Date.now();
-                return 'sitesetting.html?pagenum=' + $routeParams.pagenum + '&rnd=' + rnd;
-            },
-            data: {
-                pageTitle: '站点设置'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
+            if (!$routeParams.pagenum) {
+                $routeParams.pagenum = 1;
+            }
+            return 'articlelist.html?type=1&pagenum=' + $routeParams.pagenum + qs + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '已发布文章管理'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // rearticlelist
+    .state('rearticlelist', {
+        url: "/rearticlelist.html?type&pagenum&qs",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            var qs = "";
+            if ($routeParams.qs) {
+                qs = '&qs=' + $routeParams.qs;
+            }
+            if (!$routeParams.pagenum) {
+                $routeParams.pagenum = 1;
+            }
+            return 'articlelist.html?type=-1&pagenum=' + $routeParams.pagenum + qs + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '待审核文章管理'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // onearticlelist
+    .state('onearticlelist', {
+        url: "/onearticlelist.html?type&pagenum&qs",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            var qs = "";
+            if ($routeParams.qs) {
+                qs = '&qs=' + $routeParams.qs;
+            }
+            if (!$routeParams.pagenum) {
+                $routeParams.pagenum = 1;
+            }
+            return 'articlelist.html?type=0&pagenum=' + $routeParams.pagenum + qs + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '单页文章管理'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // articleadd
+    .state('articleadd', {
+        url: "/articleadd.html?type&id",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            return 'articleadd.html?type=' + $routeParams.type + '&id=' + $routeParams.id + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '文章编辑'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load(
+                    [{
+                        name: 'ui.select',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                         files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ui-select/select.min.css',
+                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ui-select/select.min.js'
                         ]
-                    }]);
-                }]
-            }
-        })
-        // SystemConfigsAdd
-        .state('sitesettingadd', {
-            url: "/sitesettingadd.html?id",
-            templateUrl: function($routeParams) {
-                return 'sitesettingadd.html?id=' + $routeParams.id + '&rnd=' + Date.now();
-            },
-            data: {
-                pageTitle: '站点设置'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // SystemConfigs
-        .state('systemconfigs', {
-            url: "/systemconfigs.html",
-            templateUrl: function($routeParams) {
-                return 'systemconfigs.html?rnd=' + Date.now();
-            },
-            data: {
-                pageTitle: '系统设置'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/lang/summernote-zh-CN.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/angular-summernote.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/cfgctrl.js',
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // siteconfigs
-        .state('siteconfigs', {
-            url: "/siteconfigs.html",
-            templateUrl: function($routeParams) {
-                return 'siteconfigs.html?rnd=' + Date.now();
-            },
-            data: {
-                pageTitle: '网站设置'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/lang/summernote-zh-CN.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/angular-summernote.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/cfgctrl.js',
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // category
-        .state('category', {
-            url: "/category.html",
-            templateUrl: function($routeParams) {
-                var rnd = Date.now();
-                return 'category.html?rnd=' + rnd;
-            },
-            data: {
-                pageTitle: '栏目设置'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/jquery-nestable/jquery.nestable.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/jquery-nestable/jquery.nestable.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/angular-nestable.js',
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // categoryadd
-        .state('categoryadd', {
-            url: "/categoryadd.html?id",
-            templateUrl: function($routeParams) {
-                var rnd = Date.now();
-                return 'categoryadd.html?id=' + $routeParams.id + '&rnd=' + rnd;
-            },
-            data: {
-                pageTitle: '栏目设置'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
+                    }, {
                         name: 'GgcmsApp',
                         files: [
                             ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
@@ -206,365 +345,417 @@ GgcmsApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
                             ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/angular.treeview-master/angular.treeview.min.js',
                             ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
                             ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // articlelist
-        .state('articlelist', {
-            url: "/articlelist.html?type&pagenum&qs",
-            templateUrl: function($routeParams) {
-                var rnd = Date.now();
-                var qs = "";
-                if ($routeParams.qs) {
-                    qs = '&qs=' + $routeParams.qs;
-                }
-                if (!$routeParams.pagenum) {
-                    $routeParams.pagenum = 1;
-                }
-                return 'articlelist.html?type=1&pagenum=' + $routeParams.pagenum + qs + '&rnd=' + rnd;
-            },
-            data: {
-                pageTitle: '已发布文章管理'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // rearticlelist
-        .state('rearticlelist', {
-            url: "/rearticlelist.html?type&pagenum&qs",
-            templateUrl: function($routeParams) {
-                var rnd = Date.now();
-                var qs = "";
-                if ($routeParams.qs) {
-                    qs = '&qs=' + $routeParams.qs;
-                }
-                if (!$routeParams.pagenum) {
-                    $routeParams.pagenum = 1;
-                }
-                return 'articlelist.html?type=-1&pagenum=' + $routeParams.pagenum + qs + '&rnd=' + rnd;
-            },
-            data: {
-                pageTitle: '待审核文章管理'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // onearticlelist
-        .state('onearticlelist', {
-            url: "/onearticlelist.html?type&pagenum&qs",
-            templateUrl: function($routeParams) {
-                var rnd = Date.now();
-                var qs = "";
-                if ($routeParams.qs) {
-                    qs = '&qs=' + $routeParams.qs;
-                }
-                if (!$routeParams.pagenum) {
-                    $routeParams.pagenum = 1;
-                }
-                return 'articlelist.html?type=0&pagenum=' + $routeParams.pagenum + qs + '&rnd=' + rnd;
-            },
-            data: {
-                pageTitle: '单页文章管理'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // articleadd
-        .state('articleadd', {
-            url: "/articleadd.html?type&id",
-            templateUrl: function($routeParams) {
-                var rnd = Date.now();
-                return 'articleadd.html?type=' + $routeParams.type + '&id=' + $routeParams.id + '&rnd=' + rnd;
-            },
-            data: {
-                pageTitle: '文章编辑'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/lang/summernote-zh-CN.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/angular-summernote.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/angular.treeview-master/css/angular.treeview.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/angular.treeview-master/angular.treeview.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
                             ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
                             ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
                         ]
                     }]);
-                }]
+            }]
+        }
+    })
+
+    // systemdict
+    .state('systemdict', {
+        url: "/systemdict.html?pagenum&qs",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            var qs = "";
+            if ($routeParams.qs) {
+                qs = '&qs=' + $routeParams.qs;
             }
-        })
-        // systemdict
-        .state('systemdict', {
-            url: "/systemdict.html?pagenum&qs",
-            templateUrl: function($routeParams) {
-                var rnd = Date.now();
-                var qs = "";
-                if ($routeParams.qs) {
-                    qs = '&qs=' + $routeParams.qs;
-                }
-                if (!$routeParams.pagenum) {
-                    $routeParams.pagenum = 1;
-                }
-                return 'systemdict.html?pagenum=' + $routeParams.pagenum + qs + '&rnd=' + rnd;
-            },
-            data: {
-                pageTitle: '系统字典'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
-                        ]
-                    }]);
-                }]
+            if (!$routeParams.pagenum) {
+                $routeParams.pagenum = 1;
             }
-        })
-        // systemdict
-        .state('systemdictadd', {
-            url: "/systemdictadd.html?id",
-            templateUrl: function($routeParams) {
-                var rnd = Date.now();
-                return 'systemdictadd.html?id=' + $routeParams.id + '&rnd=' + rnd;
-            },
-            data: {
-                pageTitle: '系统字典'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
-                        ]
-                    }]);
-                }]
+            return 'systemdict.html?pagenum=' + $routeParams.pagenum + qs + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '系统字典'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // systemdict
+    .state('systemdictadd', {
+        url: "/systemdictadd.html?id",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            return 'systemdictadd.html?id=' + $routeParams.id + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '系统字典'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // admingroup
+    .state('admingroup', {
+        url: "/admingroup.html?pagenum&qs",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            var qs = "";
+            if ($routeParams.qs) {
+                qs = '&qs=' + $routeParams.qs;
             }
-        })
-        // modulesdesign
-        .state('modulesdesign', {
-            url: "/modulesdesign.html",
-            templateUrl: function($routeParams) {
-                return 'modulesdesign.html?rnd=' + Date.now();
-            },
-            data: {
-                pageTitle: '模型设计'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
-                        ]
-                    }]);
-                }]
+            if (!$routeParams.pagenum) {
+                $routeParams.pagenum = 1;
             }
-        })
-        // modulesdesignadd
-        .state('modulesdesignadd', {
-            url: "/modulesdesignadd.html?id",
-            templateUrl: function($routeParams) {
-                return 'modulesdesignadd.html?id=' + $routeParams.id + '&rnd=' + Date.now();
-            },
-            data: {
-                pageTitle: '模型设计'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
-                        ]
-                    }]);
-                }]
+            return 'admingroup.html?pagenum=' + $routeParams.pagenum + qs + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '管理员分组管理'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // admingroupadd
+    .state('admingroupadd', {
+        url: "/admingroupadd.html?id",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            return 'admingroupadd.html?id=' + $routeParams.id + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '管理员分组设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // adminlist
+    .state('adminlist', {
+        url: "/adminlist.html?pagenum",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            if (!$routeParams.pagenum) {
+                $routeParams.pagenum = 1;
             }
-        })
-        // styledesign
-        .state('styledesign', {
-            url: "/styledesign.html",
-            templateUrl: function($routeParams) {
-                return 'styledesign.html?rnd=' + Date.now();
-            },
-            data: {
-                pageTitle: '风格模板设计'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
-                        ]
-                    }]);
-                }]
+            return 'adminlist.html?pagenum=' + $routeParams.pagenum + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '管理员管理'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // adminadd
+    .state('adminadd', {
+        url: "/adminadd.html?id",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            return 'adminadd.html?id=' + $routeParams.id + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '管理员设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // topiclist
+    .state('topiclist', {
+        url: "/topiclist.html?pagenum",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            if (!$routeParams.pagenum) {
+                $routeParams.pagenum = 1;
             }
-        })
-        // styledesignadd
-        .state('styledesignadd', {
-            url: "/styledesignadd.html?id",
-            templateUrl: function($routeParams) {
-                return 'styledesignadd.html?id=' + $routeParams.id + '&rnd=' + Date.now();
-            },
-            data: {
-                pageTitle: '风格模板设计'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // styletemplate
-        .state('styletemplate', {
-            url: "/styletemplate.html?id",
-            templateUrl: function($routeParams) {
-                return 'styletemplate.html?id=' + $routeParams.id + '&rnd=' + Date.now();
-            },
-            data: {
-                pageTitle: '模板查看'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'codemirrorLoad',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/codemirror.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/ui-codemirror.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/codemirror.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/theme/neat.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/addon/fold/foldgutter.css',
-                        ]
-                    }, {
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // stylestaticfile
-        .state('stylestaticfile', {
-            url: "/stylestaticfile.html?id",
-            templateUrl: function($routeParams) {
-                return 'stylestaticfile.html?id=' + $routeParams.id + '&rnd=' + Date.now();
-            },
-            data: {
-                pageTitle: '静态文件管理'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'codemirrorLoad',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/codemirror.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/ui-codemirror.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/codemirror.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/theme/neat.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/addon/fold/foldgutter.css',
-                        ]
-                    }, {
-                        name: 'GgcmsApp',
-                        files: [
-                            ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
-                            ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
-                        ]
-                    }]);
-                }]
-            }
-        })
-        // AngularJS plugins
-        .state('fileupload', {
-            url: "/file_upload.html",
-            templateUrl: "views/file_upload.html",
-            data: {
-                pageTitle: 'AngularJS File Upload'
-            },
-            controller: "GeneralPageController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load([{
-                        name: 'angularFileUpload',
-                        files: [
-                            '../assets/global/plugins/angularjs/plugins/angular-file-upload/angular-file-upload.min.js',
-                        ]
-                    }, {
-                        name: 'GgcmsApp',
-                        files: [
-                            'js/controllers/GeneralPageController.js'
-                        ]
-                    }]);
-                }]
-            }
-        })
+            return 'topiclist.html?pagenum=' + $routeParams.pagenum + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '专题管理'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // topicadd
+    .state('topicadd', {
+        url: "/topicadd.html?id",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            return 'topicadd.html?id=' + $routeParams.id + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '专题设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/lang/summernote-zh-CN.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/bootstrap-summernote/angular-summernote.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // modulesdesign
+    .state('modulesdesign', {
+        url: "/modulesdesign.html",
+        templateUrl: function($routeParams) {
+            return 'modulesdesign.html?rnd=' + Date.now();
+        },
+        data: {
+            pageTitle: '模型设计'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // modulesdesignadd
+    .state('modulesdesignadd', {
+        url: "/modulesdesignadd.html?id",
+        templateUrl: function($routeParams) {
+            return 'modulesdesignadd.html?id=' + $routeParams.id + '&rnd=' + Date.now();
+        },
+        data: {
+            pageTitle: '模型设计'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // styledesign
+    .state('styledesign', {
+        url: "/styledesign.html",
+        templateUrl: function($routeParams) {
+            return 'styledesign.html?rnd=' + Date.now();
+        },
+        data: {
+            pageTitle: '风格模板设计'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/datalist.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // styledesignadd
+    .state('styledesignadd', {
+        url: "/styledesignadd.html?id",
+        templateUrl: function($routeParams) {
+            return 'styledesignadd.html?id=' + $routeParams.id + '&rnd=' + Date.now();
+        },
+        data: {
+            pageTitle: '风格模板设计'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/configs.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/js/dataedit.js'
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // styletemplate
+    .state('styletemplate', {
+        url: "/styletemplate.html?id",
+        templateUrl: function($routeParams) {
+            return 'styletemplate.html?id=' + $routeParams.id + '&rnd=' + Date.now();
+        },
+        data: {
+            pageTitle: '模板查看'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'codemirrorLoad',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/codemirror.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/ui-codemirror.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/codemirror.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/theme/neat.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/addon/fold/foldgutter.css',
+                    ]
+                }, {
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // stylestaticfile
+    .state('stylestaticfile', {
+        url: "/stylestaticfile.html?id",
+        templateUrl: function($routeParams) {
+            return 'stylestaticfile.html?id=' + $routeParams.id + '&rnd=' + Date.now();
+        },
+        data: {
+            pageTitle: '静态文件管理'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'codemirrorLoad',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/codemirror.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/ui-codemirror.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/lib/codemirror.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/theme/neat.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/codemirror/addon/fold/foldgutter.css',
+                    ]
+                }, {
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/angularjs/plugins/ng-file-upload-12.0.4/ng-file-upload-all.min.js',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.css',
+                        ggcmsCfg.cfg_prefixpath + '/static/plugins/img-preview/imgPreview.js',
+                    ]
+                }]);
+            }]
+        }
+    })
+
+    // AngularJS plugins
+    .state('fileupload', {
+        url: "/file_upload.html",
+        templateUrl: "views/file_upload.html",
+        data: {
+            pageTitle: 'AngularJS File Upload'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'angularFileUpload',
+                    files: [
+                        '../assets/global/plugins/angularjs/plugins/angular-file-upload/angular-file-upload.min.js',
+                    ]
+                }, {
+                    name: 'GgcmsApp',
+                    files: [
+                        'js/controllers/GeneralPageController.js'
+                    ]
+                }]);
+            }]
+        }
+    })
 
     // UI Select
     .state('uiselect', {

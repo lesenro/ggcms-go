@@ -128,7 +128,7 @@ func (c *GgcmsSystemConfigsController) Update() {
 			}
 			models.MultUpdateGgcmsSystemConfig(v)
 			if sid > 0 {
-				c.cacheman.ClearByKey(cnSiteConfig + strconv.Itoa(sid))
+				c.cacheman.ClearByKey(cnSiteConfig + "_" + strconv.Itoa(sid))
 			} else {
 				c.cacheman.ClearByKey(cnSystemConfig)
 			}

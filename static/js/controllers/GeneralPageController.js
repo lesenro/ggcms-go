@@ -7,6 +7,7 @@ angular.module('GgcmsApp').service("AJAX", function($http, $timeout) {
         data: null,
         showmsg: true,
         params: null,
+        errfunc: null,
     };
     return {
         load: function(o) {
@@ -43,10 +44,16 @@ angular.module('GgcmsApp').service("AJAX", function($http, $timeout) {
                         } else {
                             console.log(retData.Code + " : " + retData.Msg);
                         }
+                        if (c.errfunc) {
+                            c.errfunc(retData, retcode, retfunc, retobj);
+                        }
                     }
                     App.unblockUI();
                 }).error(function(err) {
                     console.error(err);
+                    if (c.errfunc) {
+                        c.errfunc(err);
+                    }
                 });
         }
     };

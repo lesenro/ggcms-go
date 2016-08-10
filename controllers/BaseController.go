@@ -13,7 +13,7 @@ import (
 
 type BaseController struct {
 	beego.Controller
-	cacheman    CacheManage
+	cacheman    *CacheManage
 	currentSite int
 	cachedir    string
 }
@@ -34,7 +34,7 @@ func (this *BaseController) Prepare() {
 	} else {
 		this.currentSite, _ = strconv.Atoi(sid)
 	}
-	this.cacheman = CacheManage{}
+	this.cacheman = NewCacheManage()
 	this.cachedir = beego.AppConfig.String("cachedir")
 	if "" == this.cachedir {
 		this.cachedir = "cachedir"

@@ -48,7 +48,7 @@
     ng-options="kv.Style_folder as kv.Style_name for kv in style.style">
     <option value="" selected>---请选择---</option> 
 </select>
-<select class="form-control input-inline" name="{{item.Varname}}" id="{{item.Varname}}" ng-model="item.Value" ng-if="',select,'.indexOf(','+item.opts.type+',')!=-1&&!item.opts.multiple&&item.opts.datasource=='template'" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:item.opts.egroup}:templateFilter">
+<select class="form-control input-inline" name="{{item.Varname}}" id="{{item.Varname}}" ng-model="item.Value" ng-if="',select,'.indexOf(','+item.opts.type+',')!=-1&&!item.opts.multiple&&item.opts.datasource=='template'" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'^'+item.opts.egroup}:templateFilter">
     <option value="" selected>---请选择---</option> 
 </select>
 

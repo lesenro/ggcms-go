@@ -37,6 +37,7 @@ type GgcmsArticle struct {
 	Recommendmode     int       `orm:"column(recommendmode);null"`
 	Recommendlevel    int       `orm:"column(recommendlevel);null"`
 	Tempname          string    `orm:"column(tempname);size(100)"`
+	Mob_tempname      string    `orm:"column(mob_tempname);size(100)"`
 	Styledir          string    `orm:"column(styledir);size(100)"`
 	Siteid            int       `orm:"column(siteid);null"`
 	Mid               int       `orm:"column(mid);null"`
@@ -46,13 +47,22 @@ func (t *GgcmsArticle) TableName() string {
 	return "ggcms_article"
 }
 
+type GgcmsArticleTopic struct {
+	GgcmsArticle
+	Tid int `orm:"column(tid);null"`
+}
+
+func (t *GgcmsArticleTopic) TableName() string {
+	return "v_article_topic"
+}
 func init() {
 	orm.RegisterModel(new(GgcmsArticle))
+	orm.RegisterModel(new(GgcmsArticleTopic))
 }
 
 // AddGgcmsArticle insert a new GgcmsArticle into database and returns
 // last inserted Id on success.
-func AddGgcmsArticle(m *GgcmsArticle, pages *ArticlePages, attalist *[]GgcmsArticleAttr) (id int64, err error) {
+func AddGgcmsArticle(m *GgcmsArticle, pages *ArticlePages, attalist *[]GgcmsArticleAttr, topicids []int) (id int64, err error) {
 	o := orm.NewOrm()
 	o.Begin()
 	m.Pagetitle = pages.Pages[0].Title
@@ -85,13 +95,29 @@ func AddGgcmsArticle(m *GgcmsArticle, pages *ArticlePages, attalist *[]GgcmsArti
 			return
 		}
 	}
+	//专题
+	if len(topicids) > 0 {
+		_, err = o.Raw("Delete From `ggcms_article_topic` WHERE `aid` = ? ").SetArgs(id).Exec()
+		if err != nil {
+			o.Rollback()
+			return
+		}
+		for tid := range topicids {
+			_, err = o.Raw("INSERT INTO `ggcms_article_topic` (`aid`,`tid`) VALUES (?,?)").SetArgs(id, tid).Exec()
+			if err != nil {
+				o.Rollback()
+				return
+			}
+		}
+
+	}
 	o.Commit()
 	return
 }
 
 // UpdateGgcmsArticle updates GgcmsArticle by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateGgcmsArticleById(m *GgcmsArticle, pages *ArticlePages, ids []interface{}, attalist *[]GgcmsArticleAttr, modulesInfo *map[string]interface{}) (err error) {
+func UpdateGgcmsArticleById(m *GgcmsArticle, pages *ArticlePages, ids []interface{}, attalist *[]GgcmsArticleAttr, modulesInfo *map[string]interface{}, topicids []int) (err error) {
 	o := orm.NewOrm()
 	v := GgcmsArticle{Id: m.Id}
 	// ascertain id exists in the database
@@ -254,6 +280,22 @@ func UpdateGgcmsArticleById(m *GgcmsArticle, pages *ArticlePages, ids []interfac
 				}
 			}
 		}
+		//专题
+		if len(topicids) > 0 {
+			_, err = o.Raw("Delete From `ggcms_article_topic` WHERE `aid` = ? ").SetArgs(m.Id).Exec()
+			if err != nil {
+				o.Rollback()
+				return
+			}
+			for _, tid := range topicids {
+				_, err = o.Raw("INSERT INTO `ggcms_article_topic` (`aid`,`tid`) VALUES (?,?)").SetArgs(m.Id, tid).Exec()
+				if err != nil {
+					o.Rollback()
+					return
+				}
+			}
+
+		}
 		o.Commit()
 	}
 	return
@@ -300,6 +342,42 @@ func GetAllGgcmsArticle(query map[string]string, fields []string, sortby []strin
 	}
 	count = 0
 	var l []GgcmsArticle
+
+	if _, err := qs.Limit(limit, offset).All(&l, fields...); err == nil {
+		if len(fields) == 0 {
+			for _, v := range l {
+				ml = append(ml, v)
+			}
+		} else {
+			// trim unused fields
+			for _, v := range l {
+				m := make(map[string]interface{})
+				val := reflect.ValueOf(v)
+				for _, fname := range fields {
+					m[fname] = val.FieldByName(fname).Interface()
+				}
+				ml = append(ml, m)
+			}
+		}
+		if c {
+			count, _ = qs.Count()
+		}
+		return ml, count, nil
+	}
+	return nil, 0, err
+}
+
+// GetAllGgcmsArticle retrieves all GgcmsArticle matches certain condition. Returns empty list if
+// no records exist
+func GetAllGgcmsArticleByTopic(query map[string]string, fields []string, sortby []string, order []string,
+	offset int64, limit int64, c bool) (ml []interface{}, count int64, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(GgcmsArticleTopic))
+	if qs, err = qsInit(&qs, query, sortby, order); err != nil {
+		return nil, 0, err
+	}
+	count = 0
+	var l []GgcmsArticleTopic
 
 	if _, err := qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {

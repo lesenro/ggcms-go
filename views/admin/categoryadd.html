@@ -141,7 +141,7 @@
                                         <div class="form-group">
                                             <label class="col-md-3 control-label">栏目模板</label>
                                             <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Ctempname.$invalid&&!ggcmsForm.Ctempname.$pristine}">
-                                                <select class="form-control input-inline" name="Ctempname" id="Ctempname" ng-model="data.Ctempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'list'}:templateFilter">
+                                                <select class="form-control input-inline" name="Ctempname" id="Ctempname" ng-model="data.Ctempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'^list'}:templateFilter">
                                                     <option value="" selected>---请选择---</option> 
                                                 </select>
                                             </div>
@@ -149,7 +149,23 @@
                                         <div class="form-group">
                                             <label class="col-md-3 control-label">文章模板</label>
                                             <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Atempname.$invalid&&!ggcmsForm.Atempname.$pristine}">
-                                                <select class="form-control input-inline" name="Atempname" id="Atempname" ng-model="data.Atempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'view'}:templateFilter">
+                                                <select class="form-control input-inline" name="Atempname" id="Atempname" ng-model="data.Atempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'^view'}:templateFilter">
+                                                    <option value="" selected>---请选择---</option> 
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">移动端栏目模板</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Mob_list_temp.$invalid&&!ggcmsForm.Mob_list_temp.$pristine}">
+                                                <select class="form-control input-inline" name="Mob_list_temp" id="Mob_list_temp" ng-model="data.Mob_list_temp" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'^m_list'}:templateFilter">
+                                                    <option value="" selected>---请选择---</option> 
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">移动端文章模板</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Mob_view_temp.$invalid&&!ggcmsForm.Mob_view_temp.$pristine}">
+                                                <select class="form-control input-inline" name="Mob_view_temp" id="Mob_view_temp" ng-model="data.Mob_view_temp" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'^m_view'}:templateFilter">
                                                     <option value="" selected>---请选择---</option> 
                                                 </select>
                                             </div>

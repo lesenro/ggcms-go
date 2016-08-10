@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 
@@ -9,7 +10,7 @@ import (
 
 type GgcmsAdmin struct {
 	Id        int    `orm:"column(id);auto"`
-	Usertype  int    `orm:"column(usertype);null"`
+	Usertype  string `orm:"column(usertype);size(30)"`
 	Userid    string `orm:"column(userid);size(30)"`
 	Pwd       string `orm:"column(pwd);size(32)"`
 	Uname     string `orm:"column(uname);size(20)"`
@@ -43,6 +44,24 @@ func GetGgcmsAdminById(id int) (v *GgcmsAdmin, err error) {
 	v = &GgcmsAdmin{Id: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
+	}
+	return nil, err
+}
+func GetGgcmsAdminByName(uid string) (v *GgcmsAdmin, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(GgcmsAdmin))
+	query := make(map[string]string, 1)
+	query["Userid"] = uid
+	var strs []string
+	if qs, err = qsInit(&qs, query, strs, strs); err != nil {
+		return nil, err
+	}
+	var l []GgcmsAdmin
+	if _, err := qs.Limit(0, 0).All(&l); err == nil {
+		if len(l) == 0 {
+			return nil, errors.New("not found")
+		}
+		return &l[0], nil
 	}
 	return nil, err
 }
@@ -110,8 +129,16 @@ func UpdateGgcmsAdminById(m *GgcmsAdmin) (err error) {
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Update(m); err == nil {
-			fmt.Println("Number of records updated in database:", num)
+		//不修改密码
+
+		if m.Pwd == "" {
+			if num, err = o.Update(m, "Usertype", "Uname", "Tname", "Email", "Typeid"); err == nil {
+				fmt.Println("Number of records updated in database:", num)
+			}
+		} else {
+			if num, err = o.Update(m, "Pwd", "Usertype", "Uname", "Tname", "Email", "Typeid"); err == nil {
+				fmt.Println("Number of records updated in database:", num)
+			}
 		}
 	}
 	return

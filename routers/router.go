@@ -84,9 +84,9 @@ func init() {
 				&controllers.GgcmsSystemConfigsController{},
 			),
 		),
-		beego.NSNamespace("/ggcms_cache",
+		beego.NSNamespace("/ggcms_tools",
 			beego.NSInclude(
-				&controllers.CacheManage{},
+				&controllers.ToolsController{},
 			),
 		),
 		beego.NSNamespace("/ggcms_modules",
@@ -106,7 +106,7 @@ func init() {
 		),
 	)
 	nsAdmin := beego.NewNamespace("/"+beego.AppConfig.String("adminpath"),
-		//beego.NSBefore(controllers.AdminPagesController),
+		//beego.NSBefore(controllers.AdminLogin),
 		beego.NSInclude(
 			&controllers.AdminPagesController{},
 		),

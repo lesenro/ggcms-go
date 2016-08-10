@@ -7,7 +7,7 @@
                 <div class="caption font-green-sharp">
                     <i class="icon-settings font-green-sharp"></i>
                     <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
-                    <span class="caption-helper">模型列表</span>
+                    <span class="caption-helper" data-ng-bind="$state.current.data.pageTitle"></span>
                 </div>
                 <div class="tools">
                     <ul class="page-breadcrumb breadcrumb">
@@ -20,9 +20,11 @@
                 </div>
             </div>
             <div class="portlet-body">
-                <div class="clearfix">
-                    <a href="#/modulesdesignadd.html" class="btn green-haze btn-outline sbold uppercase"> <i class="fa fa-plus"></i> 添加</a>
-                    <button href="#/home.html" class="btn red-haze btn-outline sbold uppercase" ng-click="delete(delData,$event)"> <i class="glyphicon glyphicon-remove"></i> 删除</button>
+                <div class="row clearfix">
+                    <div class="col-sm-4">
+                        <a href="#/topicadd.html" class="btn green-haze btn-outline sbold uppercase"> <i class="fa fa-plus"></i> 添加</a>
+                        <button href="#" class="btn red-haze btn-outline sbold uppercase" ng-click="delete(delData,$event)"> <i class="glyphicon glyphicon-remove"></i> 删除</button>
+                    </div>
                 </div>
                 <div class="row margin-top-10">
                     <div class="col-xs-12">
@@ -32,9 +34,8 @@
                             <thead>
                                 <tr>
                                     <th class="col-check"> <input type="checkbox" ng-model="all" ng-click="checkAll($event)">全选 </th>
-                                    <th> 模型名称 </th>
-                                    <th> 描述 </th>
-                                    <th> 版本 </th>
+                                    <th> 专题 </th>
+                                    <th> 分组 </th>
                                     <th class="col-btn-1"> 修改 </th>
                                 </tr>
                             </thead>
@@ -45,16 +46,13 @@
                                         <input type="checkbox" class="item-check" ng-click="check([#$item.Id],$event)" ng-checked="all" value="[#$item.Id]">
                                     </td>
                                     <td>
-                                        [#$item.Module_name]
+                                        [#$item.Topic]
                                     </td>
                                     <td>
-                                        [#$item.Module_descrip]
-                                    </td>
-                                    <td>
-                                        [#$item.Module_version]
+                                        [#$item.Groupkey]
                                     </td>
                                     <td class="text-center">
-                                        <a href="#/modulesdesignadd.html?id=[#$item.Id]" class="btn btn-xs blue sbold"> <i class="fa fa-edit"></i> 修改 </a>
+                                        <a href="#/topicadd.html?id=[#$item.Id]" class="btn btn-xs blue sbold"> <i class="fa fa-edit"></i> 修改 </a>
                                     </td>
                                 </tr>
                                 [#end]
@@ -62,7 +60,7 @@
                         </table>
                         [#else]
                         <div class="alert alert-info">
-                            <strong>提示：</strong> 没有模型数据
+                            <strong>提示：</strong> 没有专题数据
                         </div>
                         [#end] [#template "admin/tpl/pagination.html" .]
                     </div>
@@ -75,5 +73,5 @@
 <!-- END MAIN CONTENT -->
 
 <script>
-    var deleteUrl = "/api/ggcms_modules/delete";
+    var deleteUrl = "/api/ggcms_topic/delete";
 </script>

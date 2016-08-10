@@ -52,6 +52,15 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
+                                            <label class="col-md-3 control-label">专题:</label>
+                                            <div class="col-md-9">
+                                                <ui-select multiple ng-model="data.topic" theme="bootstrap" ng-disabled="disabled">
+                                                    <ui-select-match placeholder="选择专题...">{{$item.Topic}}</ui-select-match>
+                                                    <ui-select-choices repeat="t in topic | filter: $select.search"> {{t.Id}} - {{t.Topic}} </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <label class="col-md-3 control-label">跳转URL</label>
                                             <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.AUrl.$invalid&&!ggcmsForm.AUrl.$pristine}">
                                                 <input type="text" name="AUrl" maxlength="255" class="form-control" placeholder="跳转URL" ng-model="data.AUrl">
@@ -116,7 +125,15 @@
                                         <div class="form-group">
                                             <label class="col-md-3 control-label">文章模板</label>
                                             <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Tempname.$invalid&&!ggcmsForm.Tempname.$pristine}">
-                                                <select class="form-control input-inline" name="Tempname" id="Tempname" ng-model="data.Tempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'view'}:templateFilter">
+                                                <select class="form-control input-inline" name="Tempname" id="Tempname" ng-model="data.Tempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'^view'}:templateFilter">
+                                                    <option value="" selected>---请选择---</option> 
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">移动端文章模板</label>
+                                            <div class="col-md-9" ng-class="{'has-error' : ggcmsForm.Mob_tempname.$invalid&&!ggcmsForm.Mob_tempname.$pristine}">
+                                                <select class="form-control input-inline" name="Mob_tempname" id="Mob_tempname" ng-model="data.Mob_tempname" ng-options="kv.Name as kv.Name for kv in style.template | filter:{Name:'^m_view'}:templateFilter">
                                                     <option value="" selected>---请选择---</option> 
                                                 </select>
                                             </div>
@@ -222,7 +239,6 @@
         <!-- END: ACCORDION DEMO -->
     </div>
 </div>
-
 <!-- END MAIN CONTENT -->
 <!-- BEGIN MAIN JS -->
 <script>
@@ -269,7 +285,7 @@
             delete data.modulesData;
         },
     };
-    angular.module('GgcmsApp', ['angularTreeview', 'summernote']);
+    angular.module('GgcmsApp', ['angularTreeview', 'summernote', 'ui.select']);
 
     function FormBodyCtrl($scope, AJAX, $timeout) {
         $scope.data.CategoryidAbs = Math.abs($scope.data.Categoryid);
@@ -417,6 +433,11 @@
             App.initUniform();
         });
 
+        $scope.style = [#.style];
+        //风格修改
+        $scope.styleChange = function(dir) {
+            $scope.style.template = $scope.style["t_" + dir];
+        };
 
     }
 
@@ -424,6 +445,17 @@
         $scope.atype = parseInt($stateParams.type);
         $scope.data.Pages = [];
         $scope.data.DeletePages = [];
+        $scope.data.topic = [];
+        $scope.topic = [#.alltopic];
+        var topic = [#.topic];
+        for (i in topic) {
+            for (j in $scope.topic) {
+                if ($scope.topic[j].Id == topic[i]) {
+                    $scope.data.topic.push($scope.topic[j]);
+                    break;
+                }
+            }
+        }
         //多页处理
         var pcount = [#.pagecount]
         $scope.pageInfo = {
@@ -534,7 +566,9 @@
                     var item = $scope.clist[i];
                     if (item.Id == $scope.data.CategoryidAbs) {
                         $scope.data.Styledir = item.Styledir;
-                        $scope.data.Atempname = item.Atempname;
+                        $scope.styleChange($scope.data.Styledir);
+                        $scope.data.Tempname = item.Atempname;
+                        $scope.data.Mob_tempname = item.Mob_view_temp;
                         $scope.loadModuleData(item.Mid);
                         break;
                     }
@@ -554,11 +588,6 @@
     }
 
     function TabPage2Ctrl($scope) {
-        $scope.style = [#.style];
-        //风格修改
-        $scope.styleChange = function(dir) {
-            $scope.style.template = $scope.style["t_" + dir];
-        };
         //模板过滤
         $scope.templateFilter = function(name, val) {
             var reg = eval("/" + val + "_/i");
@@ -620,6 +649,7 @@
     function TabPage4Ctrl($scope) {
 
     }
+
     var CreateTreeData = function(pid, list) {
         var data = [];
         for (i in list) {

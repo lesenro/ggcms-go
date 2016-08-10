@@ -78,8 +78,6 @@ function DataEditUploadCtrl($scope, FileUpload, AJAX, $timeout) {
                 if (assignment) {
                     //主信息中包含
                     if ($scope.data.hasOwnProperty(inputId)) {
-                        console.log(inputId, assignment, func);
-
                         $scope.data[inputId] = file.name;
                     } else {
                         //用于文章编辑中的模型处理

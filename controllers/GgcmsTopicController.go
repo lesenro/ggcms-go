@@ -5,13 +5,12 @@ import (
 	"ggcms/models"
 	"strconv"
 	"strings"
-
-	"github.com/astaxie/beego"
+	"time"
 )
 
 // oprations for GgcmsTopic
 type GgcmsTopicController struct {
-	beego.Controller
+	BaseController
 }
 
 func (c *GgcmsTopicController) URLMapping() {
@@ -32,19 +31,33 @@ func (c *GgcmsTopicController) Add() {
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		msg = c.validation(v)
 		if msg.Code == 0 {
-			query, _ := getQueryList("")
-			exist := models.ExistGgcmsTopic(query)
-			if exist {
-				msg.Code = 101
-				msg.Msg = "已存在，不能重复添加。"
-			} else {
-				if _, err := models.AddGgcmsTopic(&v); err == nil {
-					c.Ctx.Output.SetStatus(201)
-					msg = models.Message{0, "成功", v}
-					c.Data["json"] = msg
-				} else {
-					msg.Msg = err.Error()
+			v.Dateandtime = time.Now()
+			v.Siteid = c.currentSite
+			//有上传的文件
+			var upinfos models.UpInfos
+			if err := json.Unmarshal(c.Ctx.Input.RequestBody, &upinfos); err == nil {
+				upctrl := GgcmsUploadFileController{BaseController: c.BaseController}
+				for _, up := range upinfos.UpinfoList {
+					//LOGO图上传
+					if up.InputId == "Logo" {
+						v.Logo = upctrl.SaveFile(up)
+						continue
+					}
+					//富编辑框
+					if up.InputId == "Content" {
+						pic := upctrl.SaveFile(up)
+						v.Content = strings.Replace(v.Content, up.Realname, pic, -1)
+						continue
+					}
 				}
+			}
+			if id, err := v.Add(); err == nil {
+				v.Id = int(id)
+				c.Ctx.Output.SetStatus(201)
+				msg = models.Message{0, "成功", v}
+				c.Data["json"] = msg
+			} else {
+				msg.Msg = err.Error()
 			}
 		}
 	} else {
@@ -67,19 +80,31 @@ func (c *GgcmsTopicController) Edit() {
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		msg = c.validation(v)
 		if msg.Code == 0 {
-			query, _ := getQueryList("")
-			exist := models.ExistGgcmsTopic(query)
-			if exist {
-				msg.Code = 101
-				msg.Msg = "已存在，不能重复添加。"
-			} else {
-				if err := models.UpdateGgcmsTopicById(&v); err == nil {
-					c.Ctx.Output.SetStatus(201)
-					msg = models.Message{0, "成功", v}
-					c.Data["json"] = msg
-				} else {
-					msg.Msg = err.Error()
+			v.Dateandtime = time.Now()
+			//有上传的文件
+			var upinfos models.UpInfos
+			if err := json.Unmarshal(c.Ctx.Input.RequestBody, &upinfos); err == nil {
+				upctrl := GgcmsUploadFileController{BaseController: c.BaseController}
+				for _, up := range upinfos.UpinfoList {
+					//LOGO图上传
+					if up.InputId == "Logo" {
+						v.Logo = upctrl.SaveFile(up)
+						continue
+					}
+					//富编辑框
+					if up.InputId == "Content" {
+						pic := upctrl.SaveFile(up)
+						v.Content = strings.Replace(v.Content, up.Realname, pic, -1)
+						continue
+					}
 				}
+			}
+			if err := v.Update(); err == nil {
+				c.Ctx.Output.SetStatus(201)
+				msg = models.Message{0, "成功", v}
+				c.Data["json"] = msg
+			} else {
+				msg.Msg = err.Error()
 			}
 		}
 	} else {
@@ -164,7 +189,8 @@ func (c *GgcmsTopicController) Delete() {
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &ids); err == nil {
 		var num int64
 		queryList, _ := getQueryList("")
-		if num, err = models.MultDeleteGgcmsTopic(queryList, ids); err == nil {
+		topic := models.GgcmsTopic{}
+		if num, err = topic.MultDelete(queryList, ids); err == nil {
 			msg = models.Message{0, strconv.Itoa(int(num)), ids}
 		} else {
 			msg.Msg = err.Error()
@@ -177,7 +203,9 @@ func (c *GgcmsTopicController) Delete() {
 }
 
 func GetOneGgcmsTopic(id int) (v *models.GgcmsTopic, err error) {
-	v, err = models.GetGgcmsTopicById(id)
+	v = &models.GgcmsTopic{}
+	v.Id = id
+	err = v.GetInfo()
 	return
 }
 func GetAllGgcmsTopic(strfields, strsortby, strorder, strquery string, pagenum int64, pagesize int64, c bool) (ml []interface{}, count int64, err error) {
@@ -203,5 +231,6 @@ func GetAllGgcmsTopic(strfields, strsortby, strorder, strquery string, pagenum i
 		return nil, 0, err
 	}
 	offset := pagesize * (pagenum - 1)
-	return models.GetAllGgcmsTopic(query, fields, sortby, order, offset, pagesize, c)
+	topic := models.GgcmsTopic{}
+	return topic.GetAll(query, fields, sortby, order, offset, pagesize, c)
 }

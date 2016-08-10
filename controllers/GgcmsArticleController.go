@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/astaxie/beego"
 )
 
 // oprations for GgcmsArticle
@@ -73,6 +75,10 @@ func (c *GgcmsArticleController) Add() {
 				//LOGO图上传
 				if upinfo.InputId == "TitleImg" {
 					v.TitleImg = pic
+					cinfo, _ := GetOneGgcmsCategory(v.Categoryid)
+					if cinfo.Imgwidth > 0 && cinfo.Imgheight > 0 {
+						v.TitleThumbnailImg = upctrl.ImageThumb(pic, cinfo.Imgwidth, cinfo.Imgheight)
+					}
 					continue
 				}
 				//富编辑框
@@ -118,14 +124,22 @@ func (c *GgcmsArticleController) Add() {
 			atta.AttrUrl = upctrl.SaveFile(models.AttachmentToUpInfo(&atta))
 			attalist = append(attalist, atta)
 		}
-
+		//专题
+		sel_topic := postData["topic"].([]interface{})
+		var arrtopic = make([]int, 0)
+		for _, val := range sel_topic {
+			t := val.(map[string]interface{})
+			beego.Debug(t)
+			tid := int(t["Id"].(float64))
+			arrtopic = append(arrtopic, tid)
+		}
 		//校验
 		msg := c.validation(v)
 		if msg.Code != 0 {
 			return errors.New("输入有误")
 		}
 		//保存数据
-		_, err = models.AddGgcmsArticle(&v, &pages, &attalist)
+		_, err = models.AddGgcmsArticle(&v, &pages, &attalist, arrtopic)
 		if err == nil {
 			c.Ctx.Output.SetStatus(201)
 		}
@@ -194,6 +208,10 @@ func (c *GgcmsArticleController) Edit() {
 				//LOGO图上传
 				if upinfo.InputId == "TitleImg" {
 					v.TitleImg = pic
+					cinfo, _ := GetOneGgcmsCategory(v.Categoryid)
+					if cinfo.Imgwidth > 0 && cinfo.Imgheight > 0 {
+						v.TitleThumbnailImg = upctrl.ImageThumb(pic, cinfo.Imgwidth, cinfo.Imgheight)
+					}
 					continue
 				}
 				//富编辑框
@@ -241,7 +259,15 @@ func (c *GgcmsArticleController) Edit() {
 			}
 			attalist = append(attalist, atta)
 		}
-
+		//专题
+		sel_topic := postData["topic"].([]interface{})
+		var arrtopic = make([]int, 0)
+		for _, val := range sel_topic {
+			t := val.(map[string]interface{})
+			beego.Debug(t)
+			tid := int(t["Id"].(float64))
+			arrtopic = append(arrtopic, tid)
+		}
 		//校验
 		msg := c.validation(v)
 		if msg.Code != 0 {
@@ -250,7 +276,7 @@ func (c *GgcmsArticleController) Edit() {
 		//解析删除页
 		ids := postData["DeletePages"].([]interface{})
 		//更新数据库
-		err = models.UpdateGgcmsArticleById(&v, &pages, ids, &attalist, &modulesInfo)
+		err = models.UpdateGgcmsArticleById(&v, &pages, ids, &attalist, &modulesInfo, arrtopic)
 		if err == nil {
 			c.Ctx.Output.SetStatus(201)
 		}
@@ -407,4 +433,29 @@ func GetAllGgcmsArticle(strfields, strsortby, strorder, strquery string, pagenum
 	}
 	offset := pagesize * (pagenum - 1)
 	return models.GetAllGgcmsArticle(query, fields, sortby, order, offset, pagesize, c)
+}
+func GetAllGgcmsArticleByTopic(strfields, strsortby, strorder, strquery string, pagenum int64, pagesize int64, c bool) (ml []interface{}, count int64, err error) {
+	var fields []string
+	var sortby []string
+	var order []string
+	var query map[string]string
+	// fields: col1,col2,entity.col3
+	if v := strfields; v != "" {
+		fields = strings.Split(v, ",")
+	}
+
+	// sortby: col1,col2
+	if v := strsortby; v != "" {
+		sortby = strings.Split(v, ",")
+	}
+	// order: desc,asc
+	if v := strorder; v != "" {
+		order = strings.Split(v, ",")
+	}
+	// query: k:v,k:v
+	if query, err = getQueryList(strquery); err != nil {
+		return nil, 0, err
+	}
+	offset := pagesize * (pagenum - 1)
+	return models.GetAllGgcmsArticleByTopic(query, fields, sortby, order, offset, pagesize, c)
 }

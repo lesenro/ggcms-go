@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/astaxie/beego/orm"
@@ -13,7 +14,21 @@ func qsInit(qs *orm.QuerySeter, query map[string]string, sortby []string, order 
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
 		k = strings.Replace(k, ".", "__", -1)
-		qq = qq.Filter(k, v)
+		//in查询
+		if strings.Contains(k, "__in") {
+			vs := make([]interface{}, 0)
+			ss := strings.Split(v, "|")
+			for _, s := range ss {
+				if i, err := strconv.Atoi(s); err == nil {
+					vs = append(vs, i)
+				} else {
+					vs = append(vs, s)
+				}
+			}
+			qq = qq.Filter(k, vs)
+		} else {
+			qq = qq.Filter(k, v)
+		}
 	}
 	// order by:
 	var sortFields []string
