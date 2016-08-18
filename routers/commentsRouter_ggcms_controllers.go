@@ -22,6 +22,13 @@ func init() {
 
 	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
 		beego.ControllerComments{
+			"AdminError",
+			`/error.html`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
+		beego.ControllerComments{
 			"AdminSystemDict",
 			`/systemdict.html`,
 			[]string{"get"},
@@ -129,6 +136,13 @@ func init() {
 		beego.ControllerComments{
 			"AdminGroupAdd",
 			`/admingroupadd.html`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"] = append(beego.GlobalControllerRouter["ggcms/controllers:AdminPagesController"],
+		beego.ControllerComments{
+			"AdminPowerSet",
+			`/adminpowerset.html`,
 			[]string{"get"},
 			nil})
 
@@ -260,36 +274,8 @@ func init() {
 
 	beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"] = append(beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"],
 		beego.ControllerComments{
-			"Add",
-			`/add`,
-			[]string{"post"},
-			nil})
-
-	beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"] = append(beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"],
-		beego.ControllerComments{
 			"Edit",
-			`/edit`,
-			[]string{"post"},
-			nil})
-
-	beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"] = append(beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"],
-		beego.ControllerComments{
-			"GetOne",
-			`/:id`,
-			[]string{"get"},
-			nil})
-
-	beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"] = append(beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"],
-		beego.ControllerComments{
-			"GetAll",
-			`/`,
-			[]string{"get"},
-			nil})
-
-	beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"] = append(beego.GlobalControllerRouter["ggcms/controllers:GgcmsAdminPowersController"],
-		beego.ControllerComments{
-			"Delete",
-			`/delete`,
+			`/edit/:id`,
 			[]string{"post"},
 			nil})
 
@@ -332,6 +318,20 @@ func init() {
 		beego.ControllerComments{
 			"Delete",
 			`/delete`,
+			[]string{"post"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:GgcmsArticleController"] = append(beego.GlobalControllerRouter["ggcms/controllers:GgcmsArticleController"],
+		beego.ControllerComments{
+			"Auditing",
+			`/auditing`,
+			[]string{"post"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:GgcmsArticleController"] = append(beego.GlobalControllerRouter["ggcms/controllers:GgcmsArticleController"],
+		beego.ControllerComments{
+			"UnAuditing",
+			`/unauditing`,
 			[]string{"post"},
 			nil})
 
@@ -878,6 +878,13 @@ func init() {
 		beego.ControllerComments{
 			"CacheClearAll",
 			`/clearcacth`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["ggcms/controllers:ToolsController"] = append(beego.GlobalControllerRouter["ggcms/controllers:ToolsController"],
+		beego.ControllerComments{
+			"GetAdminPowers",
+			`/getpowers`,
 			[]string{"get"},
 			nil})
 

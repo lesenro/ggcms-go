@@ -28,6 +28,14 @@ func (c *AdminPagesController) AdminHome() {
 	c.TplName = "admin/home.html"
 }
 
+// @router /error.html [get]
+func (c *AdminPagesController) AdminError() {
+	cfgs := make(map[string]string)
+	cfgs["cfg_prefixpath"] = beego.AppConfig.String("prefixpath")
+	c.Data["errcode"] = c.GetString("errcode")
+	c.TplName = "admin/error.html"
+}
+
 //系统字典
 // @router /systemdict.html [get]
 func (c *AdminPagesController) AdminSystemDict() {
@@ -44,7 +52,6 @@ func (c *AdminPagesController) AdminSystemDict() {
 	} else {
 		qs.QueryString = "issystem:0," + qs.QueryString
 	}
-	beego.Alert(qs.QueryString)
 	turl := c.getUrl(tplName)
 	var count int64
 	count = 0
@@ -378,6 +385,17 @@ func (c *AdminPagesController) AdminGroupAdd() {
 	} else {
 		c.Data["info"] = info
 	}
+	//	strquery := "egroup:admingroup"
+	c.TplName = "admin/" + tplName
+}
+
+//管理员分组权限设置
+// @router /adminpowerset.html [get]
+func (c *AdminPagesController) AdminPowerSet() {
+	var tplName = "adminpowerset.html"
+	id := c.GetString("id")
+	c.Data["powerdata"], _, _ = GetAllGgcmsPowers("Id,Powername,Powertype,Pid", "", "", "", 0, 0, false)
+	c.Data["data"], _, _ = GetAllGgcmsAdminPowers("", "", "", "usertype:"+id, 0, 0, false)
 	//	strquery := "egroup:admingroup"
 	c.TplName = "admin/" + tplName
 }

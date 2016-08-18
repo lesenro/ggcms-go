@@ -15,7 +15,7 @@ import (
 
 func init() {
 	ns := beego.NewNamespace("/api",
-		//beego.NSBefore(controllers.AdminAuth),
+		beego.NSBefore(controllers.AdminAuth),
 		beego.NSNamespace("/ggcms_admin",
 			beego.NSInclude(
 				&controllers.GgcmsAdminController{},
@@ -105,8 +105,9 @@ func init() {
 			),
 		),
 	)
+
 	nsAdmin := beego.NewNamespace("/"+beego.AppConfig.String("adminpath"),
-		//beego.NSBefore(controllers.AdminLogin),
+		beego.NSBefore(controllers.AdminLogin),
 		beego.NSInclude(
 			&controllers.AdminPagesController{},
 		),

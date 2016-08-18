@@ -13,6 +13,7 @@ const (
 	cnSiteConfig   = "SiteConfig"
 	cnCategoryList = "CategoryList"
 	cnSiteList     = "SiteList"
+	cnUserPowers   = "UserPowers"
 )
 
 // oprations for CacheManage
@@ -102,7 +103,6 @@ nilerr:
 	if !ggcacth.IsExist(cacheName) {
 		ml, _, _ := GetAllGgcmsSites("", "", "", "", 0, 0, false)
 		ggcacth.Put(cacheName, ml, c.cacheTimeOut)
-		beego.Debug(c.cacheTimeOut)
 	}
 	imap := ggcacth.Get(cacheName)
 	if imap == nil {
@@ -110,4 +110,28 @@ nilerr:
 		goto nilerr
 	}
 	return imap.([]interface{})
+}
+
+func (c *CacheManage) CacheUserPowers(utype string) map[string]int {
+	cacheName := cnUserPowers + "_" + utype
+nilerr:
+	if !ggcacth.IsExist(cacheName) {
+		qs := make(map[string]string)
+		qs["usertype"] = utype
+		//fs := strings.Split("Id,Url,Params,Method,Datapower", ",")
+		adminpwd := models.AdminPowers{}
+		ml, _, _ := adminpwd.GetAll(qs, make([]string, 0), make([]string, 0), make([]string, 0), 0, 0, false)
+		pwlist := make(map[string]int)
+		for _, val := range ml {
+			pw := val.(models.AdminPowers)
+			pwlist[pw.Url] = pw.Id
+		}
+		ggcacth.Put(cacheName, pwlist, c.cacheTimeOut)
+	}
+	imap := ggcacth.Get(cacheName)
+	if imap == nil {
+		c.ClearByKey(cacheName)
+		goto nilerr
+	}
+	return imap.(map[string]int)
 }

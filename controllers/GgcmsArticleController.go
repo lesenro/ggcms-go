@@ -405,6 +405,39 @@ func (c *GgcmsArticleController) Delete() {
 	c.ServeJSON()
 }
 
+// @router /auditing [post]
+func (c *GgcmsArticleController) Auditing() {
+	msg := models.Message{1, "失败", nil}
+	var ids []int
+	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &ids); err == nil {
+		if err = models.GgcmsArticleAuditing(ids); err == nil {
+			msg = models.Message{0, "", ids}
+		} else {
+			msg.Msg = err.Error()
+		}
+	} else {
+		msg.Msg = err.Error()
+	}
+	c.Data["json"] = msg
+	c.ServeJSON()
+}
+
+// @router /unauditing [post]
+func (c *GgcmsArticleController) UnAuditing() {
+	msg := models.Message{1, "失败", nil}
+	var ids []int
+	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &ids); err == nil {
+		if err = models.GgcmsArticleUnAuditing(ids); err == nil {
+			msg = models.Message{0, "", ids}
+		} else {
+			msg.Msg = err.Error()
+		}
+	} else {
+		msg.Msg = err.Error()
+	}
+	c.Data["json"] = msg
+	c.ServeJSON()
+}
 func GetOneGgcmsArticle(id int) (v *models.GgcmsArticle, err error) {
 	v, err = models.GetGgcmsArticleById(id)
 	return

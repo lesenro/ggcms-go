@@ -1,0 +1,19 @@
+<div class=" page-500-full-page">
+    <div class="row" ng-controller="ErrorCtrl">
+        <div class="col-md-12 page-500" ng-if="errcode=='501'">
+            <div class=" number font-red"> 501 </div>
+            <div class=" details">
+                <h3>无权使用本功能.</h3>
+                <p> 无权使用本功能，请联系管理员. </p>
+
+                <div class="clearfix"><a href="javascript:window.history.back();" class="btn red btn-outline"> 返回上页 </a>
+                    <a href="#/home.html" class="btn blue btn-outline"> 返回首页 </a></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function ErrorCtrl($scope) {
+        $scope.errcode = [#.errcode];
+    }
+</script>

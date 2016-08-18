@@ -57,7 +57,7 @@
                                     <th class="col-check"> <input type="checkbox" ng-model="all" ng-click="checkAll($event)">全选 </th>
                                     <th> 分组名称 </th>
                                     <th> 分组标识 </th>
-                                    <th class="col-btn-1"> 修改 </th>
+                                    <th> 操作 </th>
                                 </tr>
                             </thead>
                             <tbody class="data-list">
@@ -73,6 +73,9 @@
                                         [#$item.Evalue]
                                     </td>
                                     <td class="text-center">
+                                        [#if ne $item.Evalue "0" ]
+                                        <a href="#/adminpowerset.html?id=[#$item.Evalue]" class="btn btn-xs blue sbold"> <i class="fa fa-edit"></i> 权限 </a>
+                                        [#end]
                                         <a href="#/admingroupadd.html?id=[#$item.Id]" class="btn btn-xs blue sbold"> <i class="fa fa-edit"></i> 修改 </a>
                                     </td>
                                 </tr>

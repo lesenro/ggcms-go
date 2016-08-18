@@ -3,7 +3,7 @@ var GgcmsApp = angular.module("GgcmsApp", [
     "ui.bootstrap",
 ]);
 /* Setup Layout Part - Header */
-GgcmsApp.controller('LoginController', ['$scope', 'AJAX', function($scope, AJAX) {
+GgcmsApp.controller('LoginController', ['$scope', '$http', function($scope, $http) {
     $scope.data = {
         username: "",
         password: "",
@@ -16,16 +16,32 @@ GgcmsApp.controller('LoginController', ['$scope', 'AJAX', function($scope, AJAX)
     $scope.login = function() {
         var data = angular.copy($scope.data);
         data.password = $.md5($.md5(data.password) + data.checkcode.toLowerCase());
-        AJAX.load({
-            url: "/api/ggcms_admin/login",
-            data: data,
-            func: function(retData) {
+        $http({
+            method: "post",
+            url: ggcmsCfg.cfg_prefixpath + "/api/ggcms_admin/login",
+            data: data, // pass in data as strings
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            } // set the headers so angular passing info as form data (not request payload)
+        }).success(function(retData) {
+            //成功
+            if (retData.Code == 0) {
                 location.href = "./"
-            },
-            errfunc: function() {
-                $scope.ChangCode();
+            } else {
+                loginError(retData);
             }
+
+        }).error(function() {
+                loginError({Code:"",Msg:"登录失败"});
         });
     };
+    var loginError = function(retData) {
+        var msg = {};
+        msg.title = "失败";
+        msg.icon = "error";
+        msg.msg = retData.Code + " : " + retData.Msg;
+        App.messageBox(msg);
+        $scope.ChangCode();
+    }
     $scope.ChangCode();
 }]);

@@ -151,6 +151,7 @@ func (c *GgcmsAdminController) GetOneByName() {
 					msg = models.Message{1, "用户名或密码错误，请检查", nil}
 				} else {
 					c.SetSession("uid", v.Id)
+					c.SetSession("utype", v.Usertype)
 					msg = models.Message{0, "成功", nil}
 				}
 			}

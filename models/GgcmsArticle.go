@@ -97,11 +97,6 @@ func AddGgcmsArticle(m *GgcmsArticle, pages *ArticlePages, attalist *[]GgcmsArti
 	}
 	//专题
 	if len(topicids) > 0 {
-		_, err = o.Raw("Delete From `ggcms_article_topic` WHERE `aid` = ? ").SetArgs(id).Exec()
-		if err != nil {
-			o.Rollback()
-			return
-		}
 		for tid := range topicids {
 			_, err = o.Raw("INSERT INTO `ggcms_article_topic` (`aid`,`tid`) VALUES (?,?)").SetArgs(id, tid).Exec()
 			if err != nil {
@@ -410,22 +405,76 @@ func DeleteGgcmsArticle(id int) (err error) {
 	v := GgcmsArticle{Id: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
-		var num int64
-		if num, err = o.Delete(&GgcmsArticle{Id: id}); err == nil {
-			fmt.Println("Number of records deleted in database:", num)
+		o.Begin()
+		//删除分页
+		_, err = o.Raw("Delete From `ggcms_article_pages` WHERE `articleid` = ?").SetArgs(id).Exec()
+		if err != nil {
+			o.Rollback()
+			return
 		}
+		//删除附件
+		_, err = o.Raw("Delete From `ggcms_article_attr` WHERE `articleid` = ?").SetArgs(id).Exec()
+		if err != nil {
+			o.Rollback()
+			return
+		}
+		//删除旧模型数据
+		var mod *GgcmsModules
+		mod, err = GetGgcmsModulesById(v.Mid)
+		if err != nil {
+			o.Rollback()
+			return
+		}
+		//删除旧模型数据
+		_, err = o.Raw("Delete From `" + mod.Table_name + "` WHERE `aid` = ?").SetArgs(id).Exec()
+		if err != nil {
+			o.Rollback()
+			return
+		}
+		//删除专题
+		_, err = o.Raw("Delete From `ggcms_article_topic` WHERE `aid` = ? ").SetArgs(id).Exec()
+		if err != nil {
+			o.Rollback()
+			return
+		}
+		//删除文章
+		_, err = o.Delete(&GgcmsArticle{Id: id})
+		if err != nil {
+			o.Rollback()
+			return
+		}
+		err = o.Commit()
 	}
 	return
 }
 func MultDeleteGgcmsArticle(query map[string]string, ids []int) (num int64, err error) {
+	num = 0
+	for _, id := range ids {
+		err = DeleteGgcmsArticle(id)
+		if err != nil {
+			return
+		}
+		num++
+	}
+	return
+}
+func GgcmsArticleAuditing(ids []int) (err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(GgcmsArticle))
-	var strs []string
-	if qs, err = qsInit(&qs, query, strs, strs); err != nil {
-		return 0, err
+	sids := make([]string, 0)
+	for _ = range ids {
+		sids = append(sids, "?")
 	}
-	if len(ids) > 0 {
-		qs = qs.Filter("id__in", ids)
+	qs := strings.Join(sids, ",")
+	_, err = o.Raw("UPDATE `ggcms_article` SET `categoryid` = ABS(categoryid),`dateandtime` = now() WHERE id in (" + qs + ")").SetArgs(ids).Exec()
+	return
+}
+func GgcmsArticleUnAuditing(ids []int) (err error) {
+	o := orm.NewOrm()
+	sids := make([]string, 0)
+	for _ = range ids {
+		sids = append(sids, "?")
 	}
-	return qs.Delete()
+	qs := strings.Join(sids, ",")
+	_, err = o.Raw("UPDATE `ggcms_article` SET `categoryid` = -ABS(categoryid),`dateandtime` = now()  WHERE id in (" + qs + ")").SetArgs(ids).Exec()
+	return
 }

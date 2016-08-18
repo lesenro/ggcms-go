@@ -463,6 +463,29 @@ GgcmsApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
         }
     })
 
+    // adminpowerset
+    .state('adminpowerset', {
+        url: "/adminpowerset.html?id",
+        templateUrl: function($routeParams) {
+            var rnd = Date.now();
+            return 'adminpowerset.html?id=' + $routeParams.id + '&rnd=' + rnd;
+        },
+        data: {
+            pageTitle: '分组权限设置'
+        },
+        controller: "GeneralPageController",
+        resolve: {
+            deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                return $ocLazyLoad.load([{
+                    name: 'GgcmsApp',
+                    files: [
+                        ggcmsCfg.cfg_prefixpath + '/static/js/controllers/GeneralPageController.js',
+                    ]
+                }]);
+            }]
+        }
+    })
+
     // adminlist
     .state('adminlist', {
         url: "/adminlist.html?pagenum",

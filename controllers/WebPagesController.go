@@ -224,7 +224,7 @@ func (c *WebPagesController) WebTopic() {
 			}
 		}
 	}
-	alist, count, _ := GetAllGgcmsArticleByTopic("Id,Title,Categoryid,Dateandtime,TitleImg,TitleThumbnailImg,AUrl", "Dateandtime", "desc", "siteid="+strconv.Itoa(sid)+",tid:"+idStr, int64(page), int64(tinfo.Pagesize), true)
+	alist, count, _ := GetAllGgcmsArticleByTopic("Id,Title,Categoryid,Dateandtime,TitleImg,TitleThumbnailImg,AUrl", "Dateandtime", "desc", "siteid:"+strconv.Itoa(sid)+",categoryid.gt:0,tid:"+idStr, int64(page), int64(tinfo.Pagesize), true)
 	turl := "/topic/" + idStr + "/[n]"
 	pages := models.GgcmsPagination{PageNum: page, PageSize: int(tinfo.Pagesize), RowTotal: count, UrlTemplate: turl, NavigatePages: int(navigatepages)}
 	pages.CalcPages()
@@ -530,10 +530,6 @@ func ArticleList(strfields, strquery, strsort, strorder string, pagenum, pagesiz
 	if strfields == "" {
 		strfields = "Id,Title,Categoryid,Dateandtime,TitleImg,TitleThumbnailImg,AUrl"
 	}
-	if strsort == "" {
-		strsort = "id"
-		strorder = "desc"
-	}
 	query := "siteid:" + strconv.Itoa(siteid)
 
 	if !strings.Contains(strings.ToLower(strquery), "categoryid") {
@@ -555,10 +551,7 @@ func TopicArticleList(strfields, strquery, strsort, strorder string, pagenum, pa
 	if strfields == "" {
 		strfields = "Id,Title,Categoryid,Dateandtime,TitleImg,TitleThumbnailImg,AUrl"
 	}
-	if strsort == "" {
-		strsort = "id"
-		strorder = "desc"
-	}
+
 	query := "siteid:" + strconv.Itoa(siteid)
 
 	if !strings.Contains(strings.ToLower(strquery), "categoryid") {
@@ -571,7 +564,7 @@ func TopicArticleList(strfields, strquery, strsort, strorder string, pagenum, pa
 		strsort = "Dateandtime"
 		strorder = "desc"
 	}
-	ml, _, _ = GetAllGgcmsArticleByTopic(strfields, strsort, strorder, query, pagenum, pagesize, true)
+	ml, _, _ = GetAllGgcmsArticleByTopic(strfields, strsort, strorder, query, pagenum, pagesize, false)
 	return
 }
 func ArticleInfo(id int) (v *models.GgcmsArticle) {

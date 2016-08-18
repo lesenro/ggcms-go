@@ -57,7 +57,7 @@
                 <span class="arrow "></span>
             </a>
             <ul class="sub-menu">
-                <li>
+                <li ng-if="settings.adminAuth('systemdict.html')">
                     <a href="#/systemdict.html">
                         <i class="icon-magic-wand"></i> 数据采集规则
                     </a>
@@ -91,7 +91,7 @@
                 <span class="arrow "></span>
             </a>
             <ul class="sub-menu">
-                <li>
+                <li ng-if="settings.adminAuth('siteconfigs.html')">
                     <a href="#/siteconfigs.html">
                         <i class="icon-wrench"></i> 网站设置
                     </a>

@@ -154,9 +154,10 @@ func (c *GgcmsSitesController) GetAll() {
 
 	l, _, err := GetAllGgcmsSites(strfields, strsortby, strorder, strquery, offset, limit, false)
 	if err != nil {
-		c.Data["json"] = err.Error()
+		c.Data["json"] = models.Message{1, err.Error(), err}
+
 	} else {
-		c.Data["json"] = l
+		c.Data["json"] = models.Message{0, "成功", l}
 	}
 
 	c.ServeJSON()

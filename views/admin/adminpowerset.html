@@ -1,0 +1,138 @@
+<!-- BEGIN MAIN CONTENT -->
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN: ACCORDION DEMO -->
+        <div class="portlet light" ng-controller="PowerSetCtrl">
+            <div class="portlet-title">
+                <div class="caption font-green-sharp">
+                    <i class="icon-settings font-green-sharp"></i>
+                    <span class="caption-subject bold uppercase" data-ng-bind="$state.current.data.pageTitle"></span>
+                    <span class="caption-helper" data-ng-bind="$state.current.data.pageTitle"></span>
+                </div>
+                <div class="tools">
+                    <ul class="page-breadcrumb breadcrumb">
+                        <li>
+                            <a href="#/home.html">管理首页</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                        <li class="active" data-ng-bind="$state.current.data.pageTitle"> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" name="ggcmsForm" role="form" novalidate>
+                            <input type="hidden" value="[#.info.Id]" ng-model="data.Id">
+                            <div class="form-body">
+                                <ng-include src="'powerlist.html'" ng-init="pid=0"></ng-include>
+                            </div>
+                            <div class="form-actions">
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button class="btn green" ng-click="update()" ng-disabled="ggcmsForm.$invalid"> <span class="fa fa-save"></span> 保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: ACCORDION DEMO -->
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<script id="powerlist.html" type="text/ng-template">
+    <ng-repeat ng-repeat="item in powerdata | filter:{Pid:pid}:ParentFilter | orderBy:'Orderid'">
+        <div class="portlet light bordered" ng-if="item.Powertype=='0'">
+            <div class="portlet-title">
+                <div class="caption">
+                    <input type="checkbox" id="id_{{item.Id}}" value="{{item.Id}}" ng-change="powerchange(item.Id,item.Check)" ng-model="item.Check">
+                    <span class="caption-subject font-dark bold uppercase">{{item.Powername}}</span>
+                </div>
+                <div class="tools">
+                    <a href="" class="collapse"> </a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <ng-include src="'powerlist.html'" ng-init="pid=item.Id"></ng-include>
+            </div>
+        </div>
+        <div class="panel panel-default" ng-if="item.Powertype=='1'">
+            <div class="panel-body">
+                <label class="checkbox-inline col-md-2">
+                    <input type="checkbox" id="id_{{item.Id}}" value="{{item.Id}}" ng-click="powerchange(item.Id,item.Check)" ng-model="item.Check"> {{item.Powername}}
+                </label>
+                <div class="col-md-10 text-right">
+                    <ng-include src="'powerlist.html'" ng-init="pid=item.Id"></ng-include>
+                </div>
+            </div>
+        </div>
+        <label class="checkbox-inline pull-left" ng-if="item.Powertype=='2'">
+               <input type="checkbox" id="id_{{item.Id}}" value="{{item.Id}}" ng-click="powerchange(item.Id,item.Check)" ng-model="item.Check"> {{item.Powername}} 
+        </label>
+    </ng-repeat>
+</script>
+<!-- BEGIN MAIN JS -->
+<script>
+    function PowerSetCtrl($scope, $timeout, AJAX, $stateParams) {
+        var id = $stateParams.id;
+        $scope.powerdata = [#.powerdata];
+        var pdata = [#.data];
+        var data = [];
+        for (i in pdata) {
+            data.push(pdata[i].Powerid);
+        }
+        for (i in $scope.powerdata) {
+            for (j in data) {
+                if ($scope.powerdata[i].Id == data[j]) {
+                    $scope.powerdata[i].Check = true;
+                }
+            }
+        }
+        $scope.ParentFilter = function(pid1, pid) {
+            return pid1 === pid;
+        };
+        $timeout(function() {
+            //更新表单控件样式
+            App.initUniform();
+        });
+        $scope.powerchange = function(pid, chk) {
+            for (i in $scope.powerdata) {
+                var pow = $scope.powerdata[i];
+                if (pow.Pid == pid) {
+                    $scope.powerdata[i].Check = chk;
+                    $scope.powerchange(pow.Id, chk);
+                }
+            }
+            $timeout(function() {
+                //更新表单控件样式
+                App.updateUniform();
+            });
+        };
+        $scope.update = function(data) {
+            var data = [];
+            for (i in $scope.powerdata) {
+                if ($scope.powerdata[i].Check) {
+                    data.push($scope.powerdata[i].Id);
+                }
+            }
+            AJAX.load({
+                url: '/api/ggcms_admin_powers/edit/' + id,
+                data: data,
+                func: function(retData) {
+                    var msg = {};
+                    msg.msg = "分组权限修改成功!";
+                    msg.func = function() {
+                        window.history.go(-1);
+                    };
+                    App.messageBox(msg);
+                }
+            });
+        };
+    }
+</script>
+<!-- END MAIN JS -->

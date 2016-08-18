@@ -23,7 +23,9 @@
                 <div class="row clearfix" ng-controller="SearchCtrl">
                     <div class="col-sm-4">
                         <a href="#/articleadd.html?type={{atype}}" class="btn green-haze btn-outline sbold uppercase"> <i class="fa fa-plus"></i> 添加</a>
-                        <button href="#/home.html" class="btn red-haze btn-outline sbold uppercase" ng-click="delete(delData,$event)"> <i class="glyphicon glyphicon-remove"></i> 删除</button>
+                        <button href="#" class="btn red-haze btn-outline sbold uppercase" ng-click="delete(delData,$event)"> <i class="glyphicon glyphicon-remove"></i> 删除</button>
+                        <button href="#" class="btn blue btn-outline sbold uppercase" ng-click="auditing(delData,$event)" ng-if="atype==-1"> <i class="fa fa-check"></i> 审核通过</button>
+                        <button href="#" class="btn blue btn-outline sbold uppercase" ng-click="unauditing(delData,$event)" ng-if="atype==1"> <i class="fa fa-reply"></i> 转为待审</button>
                     </div>
                     <div class="col-sm-2 col-sm-offset-2">
                         <div class="input-group pull-right">
@@ -101,10 +103,10 @@
 <!-- END MAIN CONTENT -->
 
 <script>
-    var deleteUrl = "/api/ggcms_sys_enum/delete";
+    var deleteUrl = "/api/ggcms_article/delete";
     var clist = [#.clist];
 
-    function SearchCtrl($scope, $stateParams, $location) {
+    function SearchCtrl($scope, $stateParams, $location, AJAX) {
         $scope.clist = clist;
         $scope.query = "";
         $scope.cquery = "";
@@ -165,6 +167,42 @@
             url = "#" + $location.$$path + "?qs=" + qsStr;
             return url;
         };
+        $scope.auditing = function(ids, $e) {
+            if (ids.length == 0) {
+                return false;
+            }
+            AJAX.load({
+                url: "/api/ggcms_article/auditing",
+                data: ids,
+                func: function(retData) {
+                    var msg = {};
+                    msg.msg = ids.length + " 条 文章审核成功!";
+                    msg.func = function() {
+                        window.location.reload();
+                    };
+                    App.messageBox(msg);
+                }
+            });
+
+        }
+        $scope.unauditing = function(ids, $e) {
+            if (ids.length == 0) {
+                return false;
+            }
+            AJAX.load({
+                url: "/api/ggcms_article/unauditing",
+                data: ids,
+                func: function(retData) {
+                    var msg = {};
+                    msg.msg = ids.length + " 条 文章转为待审!";
+                    msg.func = function() {
+                        window.location.reload();
+                    };
+                    App.messageBox(msg);
+                }
+            });
+
+        }
     }
 
     function ArticleListCtrl($scope) {

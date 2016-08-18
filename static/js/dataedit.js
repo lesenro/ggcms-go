@@ -10,6 +10,7 @@ function DataEditCtrl($scope, AJAX) {
         if (infoData.ProcessData) {
             infoData.ProcessData($scope.data);
         }
+        console.log($scope.data);
         AJAX.load({
             url: infoData.postUrl + strtype,
             data: $scope.data,

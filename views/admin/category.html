@@ -27,7 +27,7 @@
                 <div class="row margin-top-10">
                     <div class="col-xs-12">
                         [#with .list]
-                        <li class="dd-item dd3-item" ng-change="sortChange()" ng-nestable ng-model="items" data-id="{{$item.id}}">
+                        <div class="dd-item dd3-item" ng-change="sortChange()" ng-nestable ng-model="items" data-id="{{$item.id}}">
                             <div class="dd-handle dd3-handle"> </div>
                             <div class="dd3-content" ng-nestable-item> [{{$item.id}}]{{$item.text}}
                                 <div class="pull-right">
@@ -35,10 +35,10 @@
                                     <button class="btn red btn-xs" ng-click="delete($item)" ng-if="$item.child==0"> <i class="fa fa-save"></i> 删除 </button>
                                 </div>
                             </div>
-                        </li>
+                        </div>
                         [#else]
                         <div class="alert alert-info">
-                            <strong>提示：</strong> 没有站点数据
+                            <strong>提示：</strong> 没有栏目数据
                         </div>
                         [#end]
                     </div>

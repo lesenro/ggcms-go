@@ -8,6 +8,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/cache"
+	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/session"
 )
 
@@ -75,4 +76,54 @@ func getQueryList(strquery string) (query map[string]string, err error) {
 		}
 	}
 	return query, nil
+}
+func adminAuthPower(ctx *context.Context, isApi bool) bool {
+	url := ctx.Input.URL()
+	utype, _ := ctx.Input.Session("utype").(string)
+	cm := NewCacheManage()
+	pwlist := cm.CacheUserPowers(utype)
+	us := strings.Split(url, "/")
+	if len(us) < 2 {
+		return false
+	}
+	name := us[len(us)-1]
+	if name == "" {
+		name = us[len(us)-2]
+	}
+	us[len(us)-1] = "*"
+	nurl := strings.Join(us, "/")
+	if isApi {
+		if strings.Contains(",ggcms_sites,ggcms_sys_enum,getpowers,", name) {
+			return true
+		}
+		if _, ok := pwlist[url]; ok {
+			return true
+		}
+		if _, ok := pwlist[nurl]; ok {
+			return true
+		}
+	} else {
+		if strings.Contains(","+beego.AppConfig.String("adminpath")+",error.html,sidebar.html,header.html,footer.html,", name) {
+			return true
+		}
+		if _, ok := pwlist[name]; ok {
+			return true
+		}
+	}
+	// for purl, _ := range pwlist {
+	// 	if isApi {
+	// 		if LastWidth(url, purl) {
+	// 			return true
+	// 		}
+	// 	} else {
+	// 		if strings.Contains(","+beego.AppConfig.String("adminpath")+",error.html,sidebar.html,header.html,footer.html,", name) {
+	// 			return true
+	// 		}
+	// 		if name == purl {
+	// 			return true
+	// 		}
+	// 	}
+	// }
+	beego.Debug(url)
+	return false
 }

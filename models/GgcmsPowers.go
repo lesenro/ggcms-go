@@ -11,10 +11,11 @@ type GgcmsPowers struct {
 	Id        int    `orm:"column(id);auto"`
 	Powername string `orm:"column(powername);size(255);null"`
 	Powertype int    `orm:"column(powertype);null"`
-	Icon      string `orm:"column(icon);size(255);null"`
-	Menuid    string `orm:"column(menuid);size(255);null"`
-	Menuurl   string `orm:"column(menuurl);size(255);null"`
-	Funccode  string `orm:"column(funccode);size(255);null"`
+	Url       string `orm:"column(url);size(255);null"`
+	Params    string `orm:"column(params);size(255);null"`
+	Method    string `orm:"column(method);size(10);null"`
+	Tmpl      string `orm:"column(tmpl);size(255);null"`
+	Datapower string `orm:"column(datapower);size(255);null"`
 	Pid       int    `orm:"column(pid);null"`
 	Orderid   int    `orm:"column(orderid);null"`
 }

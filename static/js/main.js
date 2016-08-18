@@ -9,7 +9,101 @@ var GgcmsApp = angular.module("GgcmsApp", [
     "oc.lazyLoad",
     "ngSanitize"
 ]);
+GgcmsApp.service("AJAX", function($http, $timeout) {
+    var cfg = {
+        method: "POST",
+        url: "",
+        func: null,
+        data: null,
+        showmsg: true,
+        params: null,
+        errfunc: null,
+    };
+    return {
+        load: function(o) {
+            var tmp = {};
+            var c = $.extend(tmp, cfg, o);
+            if (c.url == "") {
+                return false;
+            }
+            $http({
+                    method: c.method,
+                    url: ggcmsCfg.cfg_prefixpath + c.url,
+                    data: c.data, // pass in data as strings
+                    params: c.params,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    } // set the headers so angular passing info as form data (not request payload)
+                })
+                .success(function(retData, retcode, retfunc, retobj) {
+                    //成功
+                    if (retData.Code == 0) {
+                        if (c.func) {
+                            c.func(retData, retcode, retfunc, retobj);
+                        }
+                        $timeout(function() {
+                            App.initUniform();
+                        });
+                    } else {
+                        if (c.showmsg) {
+                            var msg = {};
+                            msg.title = "失败";
+                            msg.icon = "error";
+                            msg.msg = retData.Code + " : " + retData.Msg;
+                            App.messageBox(msg);
+                        } else {
+                            console.log(retData.Code + " : " + retData.Msg);
+                        }
+                        if (c.errfunc) {
+                            c.errfunc(retData, retcode, retfunc, retobj);
+                        }
+                    }
+                    App.unblockUI();
+                }).error(function(err) {
+                    console.error(err);
+                    if (c.errfunc) {
+                        c.errfunc(err);
+                    }
+                });
+        }
+    };
+});
+GgcmsApp.service("FileUpload", function($http, $timeout, Upload) {
+    var cfg = {
+        file: null,
+        func: null,
+        inputid: "",
+        siteid: 0,
+        uptype: 0
+    };
+    return {
+        send: function(o) {
+            var tmp = {};
+            var c = $.extend(tmp, cfg, o);
+            if (c.file == null) {
+                return false;
+            }
+            var func = c.func;
+            c.func = null;
+            Upload.upload({
+                url: ggcmsCfg.cfg_prefixpath + "/api/ggcms_upload",
+                data: c
+            }).then(function(resp) {
+                if (resp.data.Code == 0 && func) {
+                    func(resp);
+                } else {
+                    console.log(resp);
+                }
 
+            }, function(resp) {
+                console.log(resp.status);
+            }, function(evt) {
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                //console.log(progressPercentage);
+            });
+        }
+    };
+});
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
 GgcmsApp.config(['$ocLazyLoadProvider', function($ocLazyLoadProvider) {
     $ocLazyLoadProvider.config({
@@ -67,7 +161,7 @@ GgcmsApp.config(['$controllerProvider', function($controllerProvider) {
 *********************************************/
 
 /* Setup global settings */
-GgcmsApp.factory('settings', ['$rootScope', function($rootScope) {
+GgcmsApp.factory('settings', ['$rootScope', 'AJAX', function($rootScope, AJAX) {
     // supported languages
     var settings = {
         layout: {
@@ -80,10 +174,28 @@ GgcmsApp.factory('settings', ['$rootScope', function($rootScope) {
         globalPath: '/static',
         layoutPath: '/static',
         currentSite: 0,
+        powers: { "allallow": 0 },
     };
-
+    settings.adminAuth = function(pow) {
+        if (settings.powers["allallow"] == 1) {
+            return true;
+        }
+        if (settings.powers[pow]) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     $rootScope.settings = settings;
-
+    AJAX.load({
+        method: 'get',
+        url: '/api/ggcms_tools/getpowers',
+        showmsg: false,
+        params: {},
+        func: function(retData) {
+            settings.powers = retData.Data;
+        }
+    });
     return settings;
 }]);
 
@@ -103,7 +215,7 @@ initialization can be disabled and Layout.init() should be called on page load c
 ***/
 
 /* Setup Layout Part - Header */
-GgcmsApp.controller('HeaderController', ['$scope', '$http', function($scope, $http) {
+GgcmsApp.controller('HeaderController', ['$scope', 'AJAX', function($scope, AJAX) {
     $scope.$on('$includeContentLoaded', function() {
         Layout.initHeader(); // init header
     });
@@ -113,15 +225,11 @@ GgcmsApp.controller('HeaderController', ['$scope', '$http', function($scope, $ht
             icon: "question",
             btn: "yes|no",
             func: function(e) {
-                $http({
-                        method: 'get',
-                        url: '/api/ggcms_tools/clearcacth',
-                        params: {}, // pass in data as strings
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        } // set the headers so angular passing info as form data (not request payload)
-                    })
-                    .success(function(retData) {
+                AJAX.load({
+                    method: 'get',
+                    url: '/api/ggcms_tools/clearcacth',
+                    params: {},
+                    func: function(retData) {
                         //成功
                         var msg = {};
                         if (retData.Code == 0) {
@@ -131,10 +239,11 @@ GgcmsApp.controller('HeaderController', ['$scope', '$http', function($scope, $ht
                             msg.icon = "error";
                         }
                         App.messageBox(msg);
-                    });
+                    }
+                });
             }
         });
-    }
+    };
     $scope.siteSelect = function(site, reload) {
         $scope.settings.currentSite = site.Id;
         $scope.cursite = site.Site_name;
@@ -145,22 +254,19 @@ GgcmsApp.controller('HeaderController', ['$scope', '$http', function($scope, $ht
         if (reload) {
             window.location.reload();
         }
-    }
-    $http({
-            method: 'get',
-            url: '/api/ggcms_sites',
-            params: {
-                limit: 0,
-                offset: 0
-            }, // pass in data as strings
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            } // set the headers so angular passing info as form data (not request payload)
-        })
-        .success(function(retData) {
+    };
+    AJAX.load({
+        method: 'get',
+        url: '/api/ggcms_sites',
+        showmsg: false,
+        params: {
+            limit: 0,
+            offset: 0
+        },
+        func: function(retData) {
             //成功
-            $scope.sitelist = retData;
-            $scope.sitetotal = retData.length;
+            $scope.sitelist = retData.Data;
+            $scope.sitetotal = retData.Data.length;
             var cid = Cookies.get("currentSite");
             for (i in $scope.sitelist) {
                 if ($scope.sitelist[i].Id == cid) {
@@ -176,7 +282,39 @@ GgcmsApp.controller('HeaderController', ['$scope', '$http', function($scope, $ht
                     }
                 }
             }
-        });
+        }
+    });
+    // $http({
+    //         method: 'get',
+    //         url: '/api/ggcms_sites',
+    //         params: {
+    //             limit: 0,
+    //             offset: 0
+    //         }, // pass in data as strings
+    //         headers: {
+    //             'Content-Type': 'application/x-www-form-urlencoded'
+    //         } // set the headers so angular passing info as form data (not request payload)
+    //     })
+    //     .success(function(retData) {
+    //         //成功
+    //         $scope.sitelist = retData;
+    //         $scope.sitetotal = retData.length;
+    //         var cid = Cookies.get("currentSite");
+    //         for (i in $scope.sitelist) {
+    //             if ($scope.sitelist[i].Id == cid) {
+    //                 $scope.siteSelect($scope.sitelist[i]);
+    //                 break;
+    //             }
+    //         }
+    //         if ($scope.settings.currentSite == 0) {
+    //             for (i in $scope.sitelist) {
+    //                 if ($scope.sitelist[i].Site_main == 1) {
+    //                     $scope.siteSelect($scope.sitelist[i]);
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //     });
 
 }]);
 
@@ -184,6 +322,7 @@ GgcmsApp.controller('HeaderController', ['$scope', '$http', function($scope, $ht
 GgcmsApp.controller('SidebarController', ['$scope', function($scope) {
     $scope.$on('$includeContentLoaded', function() {
         Layout.initSidebar(); // init sidebar
+        console.log($scope.settings);
     });
 }]);
 

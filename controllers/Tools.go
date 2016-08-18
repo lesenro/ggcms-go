@@ -249,6 +249,12 @@ func StringToFile(content, file string) error {
 func BytesToFile(bytes []byte, file string) error {
 	return ioutil.WriteFile(file, bytes, 0666)
 }
+func LastWidth(source, laststring string) bool {
+	return strings.LastIndex(source, laststring) == len(laststring)
+}
+func StartWidth(source, startstring string) bool {
+	return strings.Index(source, startstring) == 0
+}
 
 // package ziptest
 
